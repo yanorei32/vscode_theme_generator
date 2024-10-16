@@ -1,0 +1,165 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - "main"
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+env:
+  BIN_NAME_BASE: vscode_theme_generator
+  PROJECT_NAME: vscode_theme_generator
+
+jobs:
+  build:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - build: x86_64-linux
+            os: ubuntu-24.04
+            rust: stable
+            target: x86_64-unknown-linux-gnu
+            cross: false
+          - build: aarch64-linux
+            os: ubuntu-24.04
+            rust: stable
+            target: aarch64-unknown-linux-gnu
+            cross: true
+          - build: x86_64-macos
+            os: macos-14
+            rust: stable
+            target: x86_64-apple-darwin
+            cross: false
+          - build: aarch64-macos
+            os: macos-14
+            rust: stable
+            target: aarch64-apple-darwin
+            cross: false
+          - build: x86_64-windows
+            os: windows-2022
+            rust: stable
+            target: x86_64-pc-windows-msvc
+            cross: false
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4.2.1
+        with:
+          submodules: true
+
+      - name: Install ${{ matrix.rust }} toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1.10.1
+        with:
+          toolchain: ${{ matrix.rust }}
+          target: ${{ matrix.target }}
+          override: true
+
+      - name: Run cargo test
+        if: ${{ !matrix.cross }}
+        run: cargo test --release --locked --target ${{ matrix.target }}
+
+      - name: Build release binary
+        if: ${{ !matrix.cross }}
+        run: cargo build --release --locked --target ${{ matrix.target }}
+
+      - name: Install cross
+        if: ${{ matrix.cross }}
+        run: cargo install cross
+
+      - name: Run cargo test (cross)
+        if: ${{ matrix.cross }}
+        run: cross test --release --locked --target ${{ matrix.target }}
+
+      - name: Build release binary (cross)
+        if: ${{ matrix.cross }}
+        run: cross build --release --locked --target ${{ matrix.target }}
+
+      - name: Build archive
+        shell: bash
+        run: |
+          set -ex
+
+          mkdir dist
+          if [[ "${{ matrix.os }}" =~ "windows" ]]; then
+              cp "target/${{ matrix.target }}/release/${BIN_NAME_BASE}.exe" "dist/"
+          else
+              cp "target/${{ matrix.target }}/release/${BIN_NAME_BASE}" "dist/"
+          fi
+
+      - uses: actions/upload-artifact@v4.4.3
+        with:
+          name: bins-${{ matrix.build }}
+          path: dist
+
+  release:
+    name: Release
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4.2.1
+        with:
+          submodules: false
+
+      - uses: actions/download-artifact@v4.1.8
+
+      - name: Create tagname
+        shell: bash
+        run: |
+          set -ex
+
+          tag=latest
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+              tag="${GITHUB_REF#refs/tags/*}"
+          fi
+          echo TAG="${tag}" >>"${GITHUB_ENV}"
+
+      - name: Build archive
+        shell: bash
+        run: |
+          set -ex
+
+          rm -rf tmp dist
+          mkdir tmp dist
+
+          for dir in bins-*; do
+              platform=${dir#"bins-"}
+              if [[ "${platform}" =~ "windows" ]]; then
+                  bin_name="${BIN_NAME_BASE}.exe"
+              else
+                  bin_name="${BIN_NAME_BASE}"
+              fi
+              pkgname="${PROJECT_NAME}-${TAG}-${platform}"
+              mkdir "tmp/${pkgname}"
+              cp README.md LICENSE "tmp/${pkgname}"
+              mv "bins-${platform}/${bin_name}" "tmp/${pkgname}"
+
+              if [[ "${bin_name}" = "${BIN_NAME_BASE}.exe" ]]; then
+                  (cd "tmp/${pkgname}" && zip "../../dist/${pkgname}.zip" -r .)
+              else
+                  tar -zcvf "dist/${pkgname}.tar.gz" -C "tmp/${pkgname}" .
+              fi
+          done
+          ls -al dist
+
+      - name: Upload binaries to prerelease
+        uses: softprops/action-gh-release@v2.0.8
+        if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
+        with:
+          prerelease: true
+          files: dist/*
+          tag_name: latest
+          generate_release_notes: true
+
+      - name: Upload binaries to release
+        uses: softprops/action-gh-release@v2.0.8
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: dist/*
+          generate_release_notes: true

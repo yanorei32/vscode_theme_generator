@@ -1,0 +1,98 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+
+jobs:
+  test:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - build: x86_64-linux
+            os: ubuntu-24.04
+            rust: stable
+            target: x86_64-unknown-linux-gnu
+            cross: false
+          - build: aarch64-linux
+            os: ubuntu-24.04
+            rust: stable
+            target: aarch64-unknown-linux-gnu
+            cross: true
+          - build: x86_64-macos
+            os: macos-14
+            rust: stable
+            target: x86_64-apple-darwin
+            cross: false
+          - build: aarch64-macos
+            os: macos-14
+            rust: stable
+            target: aarch64-apple-darwin
+            cross: false
+          - build: x86_64-windows
+            os: windows-2022
+            rust: stable
+            target: x86_64-pc-windows-msvc
+            cross: false
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4.2.1
+        with:
+          submodules: true
+
+      - name: Install ${{ matrix.rust }} toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1.10.1
+        with:
+          toolchain: ${{ matrix.rust }}
+          target: ${{ matrix.target }}
+          override: true
+
+      - name: Run cargo test
+        if: ${{ !matrix.cross }}
+        run: cargo test --release --locked --target ${{ matrix.target }}
+
+      - name: Run cargo build
+        if: ${{ !matrix.cross }}
+        run: cargo build --release --locked --target ${{ matrix.target }}
+
+      - name: Install cross
+        if: ${{ matrix.cross }}
+        run: cargo install cross
+
+      - name: Run cargo test (cross)
+        if: ${{ matrix.cross }}
+        run: cross test --release --locked --target ${{ matrix.target }}
+
+      - name: Run cargo build (cross)
+        if: ${{ matrix.cross }}
+        run: cross build --release --locked --target ${{ matrix.target }}
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4.2.1
+        with:
+          submodules: true
+
+      - name: Install stable toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1.10.1
+        with:
+          toolchain: stable
+          components: rustfmt, clippy
+          override: true
+
+      - name: Run check
+        run: cargo check
+
+      - name: Run rustfmt
+        run: cargo fmt --all -- --check
+
+      - name: Run clippy
+        run: cargo clippy -- -D warnings
