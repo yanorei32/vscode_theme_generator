@@ -40,7 +40,7 @@ impl From<BasePalette> for FullPalette {
                 .map(|l| Srgb::from_color(Lch::new(l, lch.chroma, lch.hue)))
                 .collect()
         };
-        let (l, _) = v.average();
+        let (l, _) = v.fg_average();
         let fg = Srgb::from_color(Lch::new(l, 0.0, 0.0));
 
         Self {

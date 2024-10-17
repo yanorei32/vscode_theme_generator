@@ -1,4 +1,8 @@
-use std::{fs::File, io::Write, path::PathBuf};
+use std::{
+    fs::File,
+    io::{Read, Write},
+    path::PathBuf,
+};
 
 use palette::{FromColor, Lch, Srgb};
 use rand::rngs::ThreadRng;
@@ -23,6 +27,26 @@ pub struct BasePalette {
     pub purple: Srgb,
     pub pink: Srgb,
     pub score: f32,
+}
+
+impl From<WrapBasePalette> for BasePalette {
+    fn from(v: WrapBasePalette) -> Self {
+        let mut palette = Self {
+            dark: v.dark,
+            bg: v.bg.into(),
+            gray: v.gray.into(),
+            blue: v.blue.into(),
+            green: v.green.into(),
+            yellow: v.yellow.into(),
+            orange: v.orange.into(),
+            red: v.red.into(),
+            purple: v.purple.into(),
+            pink: v.pink.into(),
+            score: 0.0,
+        };
+        palette.calc_full_score();
+        palette
+    }
 }
 
 impl BasePalette {
@@ -63,6 +87,32 @@ impl BasePalette {
         Ok(())
     }
 
+    pub fn load(path: &PathBuf) -> anyhow::Result<Self> {
+        let mut palette_file = File::open(path).expect("file not found");
+        let mut palette_str = String::new();
+        palette_file.read_to_string(&mut palette_str)?;
+        let wrap_palette = serde_json::from_str::<WrapBasePalette>(&palette_str)?;
+        let mut palette: Self = wrap_palette.into();
+        palette.calc_full_score();
+        Ok(palette)
+    }
+
+    pub fn renew(&mut self, change_palette_element: &[usize], rng: &mut ThreadRng) {
+        let (l, chroma) = self.fg_average();
+        let bg = Lch::from_color(self.bg);
+        let base_rgb = Srgb::from_color(Lch::new(l, chroma, bg.hue));
+        let (dark, bg, _) = generate_base(&base_rgb, &ColorTheme::Auto);
+        self.dark = dark;
+        for idx in change_palette_element.iter() {
+            if *idx == 0 {
+                self.update_color(*idx, bg);
+            } else {
+                let select_rgb = generate_random_color(base_rgb, rng);
+                self.update_color(*idx, select_rgb);
+            }
+        }
+    }
+
     pub fn calc_full_score(&mut self) {
         self.score = 0.0;
 
@@ -75,10 +125,7 @@ impl BasePalette {
                     * 1000000.0;
             }
         }
-        let (l_ave, chroma_ave) = (1..9).fold((0.0, 0.0), |sum, idx: usize| {
-            let lch = Lch::from_color(self.get_color(idx));
-            (sum.0 + lch.l / 8.0, sum.1 + lch.chroma / 8.0)
-        });
+        let (l_ave, chroma_ave) = self.fg_average();
         let (l_point, chroma_point) = (1..9).fold((0.0, 0.0), |sum, idx: usize| {
             let lch = Lch::from_color(self.get_color(idx));
             (
@@ -124,11 +171,29 @@ impl BasePalette {
         self.calc_full_score();
     }
 
-    pub fn average(&self) -> (f32, f32) {
+    pub fn fg_average(&self) -> (f32, f32) {
         let (l, chroma) = (1..9).fold((0.0, 0.0), |sum, idx: usize| {
             let lch = Lch::from_color(self.get_color(idx));
             (sum.0 + lch.l / 8.0, sum.1 + lch.chroma / 8.0)
         });
         (l, chroma)
+    }
+
+    pub fn parse_id(fixs: &[String]) -> Vec<usize> {
+        let idxs = vec![
+            ("bg", 0),
+            ("gray", 1),
+            ("blue", 2),
+            ("green", 3),
+            ("yellow", 4),
+            ("orange", 5),
+            ("red", 6),
+            ("purple", 7),
+            ("pink", 8),
+        ];
+        idxs.iter()
+            .filter(|(name, _)| fixs.contains(&name.to_string()))
+            .map(|(_, id)| *id)
+            .collect()
     }
 }
