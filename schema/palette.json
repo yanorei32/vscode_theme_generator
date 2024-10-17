@@ -1,0 +1,61 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "dark": {
+            "type": "boolean"
+        },
+        "bg": {
+            "type": "string",
+            "format": "color-hex"
+        },
+        "fg": {
+            "type": "string",
+            "format": "color-hex"
+        },
+        "gray": {
+            "type": "string",
+            "format": "color-hex"
+        },
+        "blue": {
+            "type": "string",
+            "format": "color-hex"
+        },
+        "green": {
+            "type": "string",
+            "format": "color-hex"
+        },
+        "yellow": {
+            "type": "string",
+            "format": "color-hex"
+        },
+        "orange": {
+            "type": "string",
+            "format": "color-hex"
+        },
+        "red": {
+            "type": "string",
+            "format": "color-hex"
+        },
+        "purple": {
+            "type": "string",
+            "format": "color-hex"
+        },
+        "pink": {
+            "type": "string",
+            "format": "color-hex"
+        }
+    },
+    "required": [
+        "dark",
+        "bg",
+        "gray",
+        "blue",
+        "green",
+        "yellow",
+        "orange",
+        "red",
+        "purple",
+        "pink"
+    ]
+}

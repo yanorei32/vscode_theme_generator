@@ -1,0 +1,92 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "dark": {
+            "type": "boolean"
+        },
+        "bg": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "format": "color-hex"
+            }
+        },
+        "fg": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "format": "color-hex"
+            }
+        },
+        "gray": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "format": "color-hex"
+            }
+        },
+        "blue": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "format": "color-hex"
+            }
+        },
+        "green": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "format": "color-hex"
+            }
+        },
+        "yellow": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "format": "color-hex"
+            }
+        },
+        "orange": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "format": "color-hex"
+            }
+        },
+        "red": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "format": "color-hex"
+            }
+        },
+        "purple": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "format": "color-hex"
+            }
+        },
+        "pink": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "format": "color-hex"
+            }
+        }
+    },
+    "required": [
+        "dark",
+        "bg",
+        "fg",
+        "gray",
+        "blue",
+        "green",
+        "yellow",
+        "orange",
+        "red",
+        "purple",
+        "pink"
+    ]
+}
