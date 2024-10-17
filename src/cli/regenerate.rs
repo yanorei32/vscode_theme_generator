@@ -1,6 +1,13 @@
-use super::Cli;
-use crate::palette::base_palette::BasePalette;
+use std::{fs::create_dir_all, path::Path};
+
 use clap::Args;
+
+use super::Cli;
+use crate::{
+    optimize::base_palette::optimize_base_palette,
+    palette::{base_palette::BasePalette, full_palette::FullPalette},
+    setting::Setting,
+};
 
 #[derive(Debug, Clone, Args)]
 
@@ -30,7 +37,26 @@ impl TryFrom<RegenerateArgs> for ParseRegenerateArgs {
 impl Cli {
     pub fn regenerate(args: &RegenerateArgs) -> anyhow::Result<()> {
         let args = ParseRegenerateArgs::try_from(args.clone())?;
-        todo!();
+        let mut rng = rand::thread_rng();
+
+        let path_prefix = Path::new(".vscode");
+        create_dir_all(path_prefix)?;
+        let palette_path = path_prefix.join("palette.json");
+        let full_palette_path = path_prefix.join("full_palette.json");
+        let setting_path = path_prefix.join("settings.json");
+
+        let mut palette = BasePalette::load(&palette_path)?;
+        if !args.fixs.is_empty() {
+            palette.renew(&args.fixs, &mut rng);
+            optimize_base_palette(&mut palette, &args.fixs, 500, &mut rng)?;
+        }
+        palette.export(&palette_path)?;
+
+        let full_palette = FullPalette::from(palette);
+        full_palette.export(&full_palette_path)?;
+
+        let setting = Setting::new(&full_palette, args.no_saturation_fg);
+        setting.export(&setting_path)?;
         Ok(())
     }
 }

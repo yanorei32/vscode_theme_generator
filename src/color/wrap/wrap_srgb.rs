@@ -31,6 +31,12 @@ impl From<Srgb> for WrapSrgb {
     }
 }
 
+impl From<WrapSrgb> for Srgb {
+    fn from(v: WrapSrgb) -> Self {
+        Srgb::new(v.red, v.green, v.blue)
+    }
+}
+
 impl Serialize for WrapSrgb {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
