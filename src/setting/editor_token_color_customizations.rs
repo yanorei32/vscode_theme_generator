@@ -114,39 +114,39 @@ impl EditorTokenColorCustomizations {
                 TextMateRule::new(vec!["markup.underline"], Some("underline"), None),
                 TextMateRule::new(vec!["markup.strikethrough"], Some("strikethrough"), None),
                 TextMateRule::new(vec!["markup.inline.raw"], None, Some(palette.blue[3])),
-                TextMateRule::new(
-                    vec![
-                        "markup.deleted",
-                        "meta.diff.header.from-file",
-                        "punctuation.definition.deleted",
-                    ],
-                    None,
-                    Some(palette.red[3]),
-                ),
-                TextMateRule::new(
-                    vec![
-                        "markup.inserted",
-                        "meta.diff.header.to-file",
-                        "punctuation.definition.inserted",
-                    ],
-                    None,
-                    Some(palette.green[3]),
-                ),
-                TextMateRule::new(
-                    vec!["markup.changed", "punctuation.definition.changed"],
-                    None,
-                    Some(palette.orange[3]),
-                ),
-                TextMateRule::new(
-                    vec!["markup.ignored", "markup.untracked"],
-                    None,
-                    Some(palette.gray[0]),
-                ),
-                TextMateRule::new(
-                    vec!["meta.diff.range"],
-                    Some("bold"),
-                    Some(palette.purple[3]),
-                ),
+                // TextMateRule::new(
+                //     vec![
+                //         "markup.deleted",
+                //         "meta.diff.header.from-file",
+                //         "punctuation.definition.deleted",
+                //     ],
+                //     None,
+                //     Some(palette.red[3]),
+                // ),
+                // TextMateRule::new(
+                //     vec![
+                //         "markup.inserted",
+                //         "meta.diff.header.to-file",
+                //         "punctuation.definition.inserted",
+                //     ],
+                //     None,
+                //     Some(palette.green[3]),
+                // ),
+                // TextMateRule::new(
+                //     vec!["markup.changed", "punctuation.definition.changed"],
+                //     None,
+                //     Some(palette.orange[3]),
+                // ),
+                // TextMateRule::new(
+                //     vec!["markup.ignored", "markup.untracked"],
+                //     None,
+                //     Some(palette.gray[0]),
+                // ),
+                // TextMateRule::new(
+                //     vec!["meta.diff.range"],
+                //     Some("bold"),
+                //     Some(palette.purple[3]),
+                // ),
                 TextMateRule::new(vec!["meta.diff.header"], None, Some(palette.blue[3])),
                 TextMateRule::new(vec!["meta.separator"], Some("bold"), Some(palette.blue[3])),
                 TextMateRule::new(vec!["meta.output"], None, Some(palette.blue[3])),

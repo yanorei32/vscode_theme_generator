@@ -162,12 +162,12 @@ pub struct WorkbenchColorCustomizations {
     // pub status_bar_item_remote_foreground: WrapSrgb,
     // #[serde(rename = "statusBarItem.remoteBackground")]
     // pub status_bar_item_remote_background: WrapSrgb,
-    #[serde(rename = "editorGroupHeader.tabsBackground")]
-    pub editor_group_header_tabs_background: WrapSrgb,
-    #[serde(rename = "editorGroupHeader.tabsBorder")]
-    pub editor_group_header_tabs_border: WrapSrgb,
-    #[serde(rename = "editorGroup.border")]
-    pub editor_group_border: WrapSrgb,
+    // #[serde(rename = "editorGroupHeader.tabsBackground")]
+    // pub editor_group_header_tabs_background: WrapSrgb,
+    // #[serde(rename = "editorGroupHeader.tabsBorder")]
+    // pub editor_group_header_tabs_border: WrapSrgb,
+    // #[serde(rename = "editorGroup.border")]
+    // pub editor_group_border: WrapSrgb,
     // #[serde(rename = "tab.activeForeground")]
     // pub tab_active_foreground: WrapSrgb,
     // #[serde(rename = "tab.inactiveForeground")]
@@ -202,20 +202,20 @@ pub struct WorkbenchColorCustomizations {
     pub editor_foreground: WrapSrgb,
     #[serde(rename = "editor.background")]
     pub editor_background: WrapSrgb,
-    #[serde(rename = "editorWidget.background")]
-    pub editor_widget_background: WrapSrgb,
-    #[serde(rename = "editor.foldBackground")]
-    pub editor_fold_background: WrapSrgb,
+    // #[serde(rename = "editorWidget.background")]
+    // pub editor_widget_background: WrapSrgb,
+    // #[serde(rename = "editor.foldBackground")]
+    // pub editor_fold_background: WrapSrgb,
     #[serde(rename = "editor.lineHighlightBackground")]
     pub editor_line_highlight_background: WrapSrgb,
     #[serde(rename = "editorLineNumber.foreground")]
     pub editor_line_number_foreground: WrapSrgb,
     #[serde(rename = "editorLineNumber.activeForeground")]
     pub editor_line_number_active_foreground: WrapSrgb,
-    #[serde(rename = "editorIndentGuide.background")]
-    pub editor_indent_guide_background: WrapSrgb,
-    #[serde(rename = "editorIndentGuide.activeBackground")]
-    pub editor_indent_guide_active_background: WrapSrgb,
+    #[serde(rename = "editorIndentGuide.background1")]
+    pub editor_indent_guide_background1: WrapSrgb,
+    #[serde(rename = "editorIndentGuide.activeBackground1")]
+    pub editor_indent_guide_active_background1: WrapSrgb,
     #[serde(rename = "editorWhitespace.foreground")]
     pub editor_whitespace_foreground: WrapSrgb,
     #[serde(rename = "editorCursor.foreground")]
@@ -224,32 +224,32 @@ pub struct WorkbenchColorCustomizations {
     pub editor_error_foreground: WrapSrgb,
     #[serde(rename = "editorWarning.foreground")]
     pub editor_warning_foreground: WrapSrgb,
-    #[serde(rename = "editor.findMatchBackground")]
-    pub editor_find_match_background: WrapSrgb,
-    #[serde(rename = "editor.findMatchHighlightBackground")]
-    pub editor_find_match_highlight_background: WrapSrgb,
-    #[serde(rename = "editor.linkedEditingBackground")]
-    pub editor_linked_editing_background: WrapSrgb,
-    #[serde(rename = "editor.inactiveSelectionBackground")]
-    pub editor_inactive_selection_background: WrapSrgb,
-    #[serde(rename = "editor.selectionBackground")]
-    pub editor_selection_background: WrapSrgb,
-    #[serde(rename = "editor.selectionHighlightBackground")]
-    pub editor_selection_highlight_background: WrapSrgb,
-    #[serde(rename = "editor.selectionHighlightBorder")]
-    pub editor_selection_highlight_border: WrapSrgb,
-    #[serde(rename = "editor.wordHighlightBackground")]
-    pub editor_word_highlight_background: WrapSrgb,
-    #[serde(rename = "editor.wordHighlightStrongBackground")]
-    pub editor_word_highlight_strong_background: WrapSrgb,
-    #[serde(rename = "editor.wordHighlightBorder")]
-    pub editor_word_highlight_border: WrapSrgb,
-    #[serde(rename = "editor.wordHighlightStrongBorder")]
-    pub editor_word_highlight_strong_border: WrapSrgb,
-    #[serde(rename = "editorBracketMatch.background")]
-    pub editor_bracket_match_background: WrapSrgb,
-    #[serde(rename = "editorBracketMatch.border")]
-    pub editor_bracket_match_border: WrapSrgb,
+    // #[serde(rename = "editor.findMatchBackground")]
+    // pub editor_find_match_background: WrapSrgb,
+    // #[serde(rename = "editor.findMatchHighlightBackground")]
+    // pub editor_find_match_highlight_background: WrapSrgb,
+    // #[serde(rename = "editor.linkedEditingBackground")]
+    // pub editor_linked_editing_background: WrapSrgb,
+    // #[serde(rename = "editor.inactiveSelectionBackground")]
+    // pub editor_inactive_selection_background: WrapSrgb,
+    // #[serde(rename = "editor.selectionBackground")]
+    // pub editor_selection_background: WrapSrgb,
+    // #[serde(rename = "editor.selectionHighlightBackground")]
+    // pub editor_selection_highlight_background: WrapSrgb,
+    // #[serde(rename = "editor.selectionHighlightBorder")]
+    // pub editor_selection_highlight_border: WrapSrgb,
+    // #[serde(rename = "editor.wordHighlightBackground")]
+    // pub editor_word_highlight_background: WrapSrgb,
+    // #[serde(rename = "editor.wordHighlightStrongBackground")]
+    // pub editor_word_highlight_strong_background: WrapSrgb,
+    // #[serde(rename = "editor.wordHighlightBorder")]
+    // pub editor_word_highlight_border: WrapSrgb,
+    // #[serde(rename = "editor.wordHighlightStrongBorder")]
+    // pub editor_word_highlight_strong_border: WrapSrgb,
+    // #[serde(rename = "editorBracketMatch.background")]
+    // pub editor_bracket_match_background: WrapSrgb,
+    // #[serde(rename = "editorBracketMatch.border")]
+    // pub editor_bracket_match_border: WrapSrgb,
     // #[serde(rename = "editorGutter.modifiedBackground")]
     // pub editor_gutter_modified_background: WrapSrgb,
     // #[serde(rename = "editorGutter.addedBackground")]
@@ -326,14 +326,14 @@ pub struct WorkbenchColorCustomizations {
     pub editor_bracket_highlight_foreground1: WrapSrgb,
     #[serde(rename = "editorBracketHighlight.foreground2")]
     pub editor_bracket_highlight_foreground2: WrapSrgb,
-    #[serde(rename = "editorBracketHighlight.foreground3")]
-    pub editor_bracket_highlight_foreground3: WrapSrgb,
-    #[serde(rename = "editorBracketHighlight.foreground4")]
-    pub editor_bracket_highlight_foreground4: WrapSrgb,
-    #[serde(rename = "editorBracketHighlight.foreground5")]
-    pub editor_bracket_highlight_foreground5: WrapSrgb,
-    #[serde(rename = "editorBracketHighlight.foreground6")]
-    pub editor_bracket_highlight_foreground6: WrapSrgb,
+    // #[serde(rename = "editorBracketHighlight.foreground3")]
+    // pub editor_bracket_highlight_foreground3: WrapSrgb,
+    // #[serde(rename = "editorBracketHighlight.foreground4")]
+    // pub editor_bracket_highlight_foreground4: WrapSrgb,
+    // #[serde(rename = "editorBracketHighlight.foreground5")]
+    // pub editor_bracket_highlight_foreground5: WrapSrgb,
+    // #[serde(rename = "editorBracketHighlight.foreground6")]
+    // pub editor_bracket_highlight_foreground6: WrapSrgb,
     // #[serde(rename = "debugToolBar.background")]
     // pub debug_tool_bar_background: WrapSrgb,
     // #[serde(rename = "editor.stackFrameHighlightBackground")]
@@ -360,6 +360,7 @@ pub struct WorkbenchColorCustomizations {
 
 impl WorkbenchColorCustomizations {
     pub fn new(palette: &WrapFullPalette, no_saturation_fg: bool) -> Self {
+        println!("{no_saturation_fg}");
         let fg = if no_saturation_fg {
             &palette.fg
         } else {
@@ -462,9 +463,9 @@ impl WorkbenchColorCustomizations {
             // status_bar_item_prominent_background: palette.gray[3],
             // status_bar_item_remote_foreground: fg[3],
             // status_bar_item_remote_background: palette.bg[0],
-            editor_group_header_tabs_background: palette.bg[1],
-            editor_group_header_tabs_border: palette.gray[2],
-            editor_group_border: palette.gray[2],
+            // editor_group_header_tabs_background: palette.bg[1],
+            // editor_group_header_tabs_border: palette.gray[2],
+            // editor_group_border: palette.gray[2],
 
             // tab_active_foreground: fg[2],
             // tab_inactive_foreground: fg[3],
@@ -484,31 +485,31 @@ impl WorkbenchColorCustomizations {
             // breadcrumb_picker_background: palette.bg[2],
             editor_foreground: fg[2],
             editor_background: palette.bg[2],
-            editor_widget_background: palette.bg[3],
-            editor_fold_background: palette.bg[4].alpha(0.5),
+            // editor_widget_background: palette.bg[3],
+            // editor_fold_background: palette.bg[4].alpha(0.5),
             editor_line_highlight_background: palette.bg[4],
             editor_line_number_foreground: fg[1],
             editor_line_number_active_foreground: fg[2],
-            editor_indent_guide_background: palette.bg[0],
-            editor_indent_guide_active_background: palette.bg[1],
+            editor_indent_guide_background1: palette.bg[4],
+            editor_indent_guide_active_background1: palette.gray[0],
             editor_whitespace_foreground: fg[1],
             editor_cursor_foreground: fg[3],
             editor_error_foreground: palette.red[3],
             editor_warning_foreground: palette.yellow[3],
 
-            editor_find_match_background: palette.bg[4],
-            editor_find_match_highlight_background: palette.bg[0].alpha(0.5),
-            editor_linked_editing_background: palette.bg[4],
-            editor_inactive_selection_background: palette.bg[4].alpha(0.5),
-            editor_selection_background: palette.bg[4],
-            editor_selection_highlight_background: palette.bg[4].alpha(0.5),
-            editor_selection_highlight_border: palette.gray[0],
-            editor_word_highlight_background: palette.bg[4].alpha(0.5),
-            editor_word_highlight_strong_background: palette.bg[4].alpha(0.5),
-            editor_word_highlight_border: palette.gray[0],
-            editor_word_highlight_strong_border: palette.gray[0],
-            editor_bracket_match_background: palette.bg[4],
-            editor_bracket_match_border: palette.gray[0],
+            // editor_find_match_background: palette.bg[4],
+            // editor_find_match_highlight_background: palette.bg[0].alpha(0.5),
+            // editor_linked_editing_background: palette.bg[4],
+            // editor_inactive_selection_background: palette.bg[4].alpha(0.5),
+            // editor_selection_background: palette.bg[4],
+            // editor_selection_highlight_background: palette.bg[4].alpha(0.5),
+            // editor_selection_highlight_border: palette.gray[0],
+            // editor_word_highlight_background: palette.bg[4].alpha(0.5),
+            // editor_word_highlight_strong_background: palette.bg[4].alpha(0.5),
+            // editor_word_highlight_border: palette.gray[0],
+            // editor_word_highlight_strong_border: palette.gray[0],
+            // editor_bracket_match_background: palette.bg[4],
+            // editor_bracket_match_border: palette.gray[0],
 
             // editor_gutter_modified_background: palette.blue[2],
             // editor_gutter_added_background: palette.green[1],
@@ -552,10 +553,10 @@ impl WorkbenchColorCustomizations {
             // terminal_ansi_bright_yellow: palette.yellow[2],
             editor_bracket_highlight_foreground1: palette.blue[3],
             editor_bracket_highlight_foreground2: palette.orange[3],
-            editor_bracket_highlight_foreground3: palette.purple[3],
-            editor_bracket_highlight_foreground4: palette.blue[3],
-            editor_bracket_highlight_foreground5: palette.orange[3],
-            editor_bracket_highlight_foreground6: palette.purple[3],
+            // editor_bracket_highlight_foreground3: palette.purple[3],
+            // editor_bracket_highlight_foreground4: palette.blue[3],
+            // editor_bracket_highlight_foreground5: palette.orange[3],
+            // editor_bracket_highlight_foreground6: palette.purple[3],
             // debug_tool_bar_background: palette.bg[2],
             // editor_stack_frame_highlight_background: palette.bg[3],
             // editor_focused_stack_frame_highlight_background: palette.bg[3],
