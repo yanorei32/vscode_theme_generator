@@ -13,7 +13,7 @@ pub fn optimize_base_palette(
     rng: &mut ThreadRng,
 ) -> anyhow::Result<()> {
     let time_limit = Duration::from_millis(time_limit);
-    let start_temp = 150.0f32;
+    let start_temp = 15000.0f32;
     let end_temp = 0.0;
 
     let start = time::Instant::now();
@@ -23,10 +23,9 @@ pub fn optimize_base_palette(
     let mut now_palette = *best_palette;
     while start.elapsed() < time_limit {
         let next_palette = generate_base_palette(&now_palette, change_palette_element, rng)?;
-
         let temp = start_temp
             + (end_temp - start_temp)
-                * ((start.elapsed().as_micros() / time_limit.as_micros()) as f32);
+                * ((start.elapsed().as_micros() as f32 / time_limit.as_micros() as f32));
         let diff = next_palette.score - now_palette.score;
         let r: f32 = rng.gen();
         if r < (diff / temp).exp() || now_palette.score < next_palette.score {
