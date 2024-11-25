@@ -26,12 +26,12 @@ pub fn generate_base(base_rgb: &Srgb, color_theme: &ColorTheme) -> (bool, Srgb, 
     if compare(&black, base_rgb) < 10.5 {
         let (dark, bg, fg) = match color_theme {
             ColorTheme::Auto | ColorTheme::Dark => {
-                (true, *base_rgb, Srgb::from_color(Lch::new(50.0, 50.0, 0.0)))
+                (true, *base_rgb, Srgb::from_color(Lch::new(50.0, 50.0, base_lch.hue)))
             }
             ColorTheme::Light => (
                 false,
                 Srgb::from_color(Lch::new(95.0, 5.0, base_lch.hue)),
-                Srgb::from_color(Lch::new(50.0, 50.0, 0.0)),
+                Srgb::from_color(Lch::new(50.0, 50.0, base_lch.hue)),
             ),
         };
         if dark {
@@ -46,12 +46,12 @@ pub fn generate_base(base_rgb: &Srgb, color_theme: &ColorTheme) -> (bool, Srgb, 
             ColorTheme::Dark => (
                 true,
                 Srgb::from_color(Lch::new(10.0, 10.0, base_lch.hue)),
-                Srgb::from_color(Lch::new(50.0, 50.0, 0.0)),
+                Srgb::from_color(Lch::new(50.0, 50.0, base_lch.hue)),
             ),
             ColorTheme::Auto | ColorTheme::Light => (
                 false,
                 *base_rgb,
-                Srgb::from_color(Lch::new(50.0, 50.0, 0.0)),
+                Srgb::from_color(Lch::new(50.0, 50.0, base_lch.hue)),
             ),
         };
         if dark {
