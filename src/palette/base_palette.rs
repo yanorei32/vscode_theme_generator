@@ -36,10 +36,7 @@ impl PaletteColor {
     }
 
     pub fn is_colorized(&self) -> bool {
-        match self {
-            Self::Bg | Self::Gray => false,
-            _ => true,
-        }
+        !matches!(self, Self::Bg | Self::Gray)
     }
 }
 
@@ -158,7 +155,7 @@ impl BasePalette {
         for (nth, color_a) in all::<PaletteColor>().enumerate() {
             for color_b in all::<PaletteColor>().skip(nth + 1) {
                 let p = if color_a.is_bg_color() { 42.0 } else { 21.0 };
-                self.score += (compare(&self.get_color(color_a), &self.get_color(color_b)) / p)
+                self.score += (compare(&self.color_table[color_a], &self.color_table[color_b]) / p)
                     .log10()
                     .min(0.0)
                     * 1000000.0;
@@ -178,6 +175,7 @@ impl BasePalette {
                     sum.1 + ((lch.chroma - chroma_ave).abs() - 5.0).max(0.0).powf(2.0),
                 )
             });
+
         self.score -= l_point * 10000000.0 + chroma_point * 10000000.0;
     }
 
@@ -185,12 +183,8 @@ impl BasePalette {
         self.color_table[c]
     }
 
-    fn set_color(&mut self, c: PaletteColor, color: Srgb) {
-        self.color_table[c] = color;
-    }
-
     pub fn update_color(&mut self, c: PaletteColor, color: Srgb) {
-        self.set_color(c, color);
+        self.color_table[c] = color;
         self.calc_full_score();
     }
 
