@@ -58,7 +58,7 @@ impl Cli {
         let setting_path = path_prefix.join("settings.json");
 
         let mut palette = BasePalette::new(&args.rgb, &args.color_theme, &mut rng);
-        optimize_base_palette(&mut palette, &(2..9).collect(), 100, &mut rng)?;
+        optimize_base_palette(&mut palette, (2..9).collect(), 100, &mut rng)?;
         palette.export(&palette_path)?;
 
         let full_palette = FullPalette::from(palette);

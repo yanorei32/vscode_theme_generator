@@ -8,7 +8,7 @@ use crate::palette::base_palette::BasePalette;
 
 pub fn optimize_base_palette(
     best_palette: &mut BasePalette,
-    change_palette_element: &Vec<usize>,
+    change_palette_element: Vec<usize>,
     time_limit: u64,
     rng: &mut ThreadRng,
 ) -> anyhow::Result<()> {
@@ -22,7 +22,7 @@ pub fn optimize_base_palette(
 
     let mut now_palette = *best_palette;
     while start.elapsed() < time_limit {
-        let next_palette = generate_base_palette(&now_palette, change_palette_element, rng)?;
+        let next_palette = generate_base_palette(&now_palette, &change_palette_element, rng)?;
         let temp = start_temp
             + (end_temp - start_temp)
                 * (start.elapsed().as_micros() as f32 / time_limit.as_micros() as f32);
@@ -66,7 +66,7 @@ impl ChangeType {
 
 pub fn generate_base_palette(
     now_palette: &BasePalette,
-    change_palette_element: &Vec<usize>,
+    change_palette_element: &[usize],
     rng: &mut ThreadRng,
 ) -> anyhow::Result<BasePalette> {
     let mut next_palette = *now_palette;

@@ -48,7 +48,7 @@ impl Cli {
         let mut palette = BasePalette::load(&palette_path)?;
         if !args.fixs.is_empty() {
             palette.renew(&args.fixs, &mut rng);
-            optimize_base_palette(&mut palette, &args.fixs, 100, &mut rng)?;
+            optimize_base_palette(&mut palette, args.fixs, 100, &mut rng)?;
         }
         palette.export(&palette_path)?;
 
