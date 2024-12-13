@@ -5,9 +5,11 @@ use palette::{FromColor as _, Lch};
 
 use super::{base_palette::{BasePalette, PaletteColor}, wrap::wrap_full_palette::WrapFullPalette};
 
+use crate::model::ActualThemeMode;
+
 #[derive(Debug, Clone)]
 pub struct FullPalette {
-    pub dark: bool,
+    pub actual_mode: ActualThemeMode,
     pub bg: Vec<Srgb>,
     pub fg: Vec<Srgb>,
     pub gray: Vec<Srgb>,
@@ -33,7 +35,7 @@ impl From<BasePalette> for FullPalette {
                 lch.l - width / 2.0,
                 lch.l - width,
             ];
-            if v.dark {
+            if v.actual_mode == ActualThemeMode::Dark {
                 ls.reverse();
             }
             ls.into_iter()
@@ -44,7 +46,7 @@ impl From<BasePalette> for FullPalette {
         let fg = Srgb::from_color(Lch::new(l, 0.0, 0.0));
 
         Self {
-            dark: v.dark,
+            actual_mode: v.actual_mode,
             bg: generate(v.color_table[PaletteColor::Bg], true),
             fg: generate(fg, true),
             gray: generate(v.color_table[PaletteColor::Gray], false),

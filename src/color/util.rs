@@ -2,6 +2,7 @@ use palette::{color_difference::Ciede2000, FromColor, Lch, Srgb};
 use rand::{rngs::ThreadRng, Rng};
 
 use crate::cli::generate::ColorTheme;
+use crate::model::*;
 
 pub trait SrgbExt {
     fn compare(&self, other: &Self) -> f32;
@@ -27,51 +28,44 @@ impl SrgbExt for Srgb {
     }
 }
 
-pub fn generate_base(base_rgb: &Srgb, color_theme: &ColorTheme) -> (bool, Srgb, Srgb) {
+pub fn generate_base(base_rgb: &Srgb, color_theme: &ColorTheme) -> (ActualThemeMode, Srgb, Srgb) {
     let base_lch = Lch::from_color(*base_rgb);
 
     let black = Srgb::new(0.0, 0.0, 0.0);
     if black.compare(base_rgb) < 10.5 {
-        let (dark, bg, fg) = match color_theme {
+        let (actual_mode, bg, fg) = match color_theme {
             ColorTheme::Auto | ColorTheme::Dark => (
-                true,
+                ActualThemeMode::Dark,
                 *base_rgb,
                 Srgb::from_color(Lch::new(50.0, 50.0, base_lch.hue)),
             ),
             ColorTheme::Light => (
-                false,
+                ActualThemeMode::Light,
                 Srgb::from_color(Lch::new(95.0, 5.0, base_lch.hue)),
                 Srgb::from_color(Lch::new(50.0, 50.0, base_lch.hue)),
             ),
         };
-        if dark {
-            println!("select dark default theme");
-        } else {
-            println!("select light default theme");
-        }
-        return (dark, bg, fg);
+        println!("select {actual_mode} default theme");
+        return (actual_mode, bg, fg);
     }
 
     let white = Srgb::new(1.0, 1.0, 1.0);
     if white.compare(base_rgb) < 10.5 {
-        let (dark, bg, fg) = match color_theme {
+        let (actual_mode, bg, fg) = match color_theme {
             ColorTheme::Dark => (
-                true,
+                ActualThemeMode::Dark,
                 Srgb::from_color(Lch::new(10.0, 10.0, base_lch.hue)),
                 Srgb::from_color(Lch::new(50.0, 50.0, base_lch.hue)),
             ),
             ColorTheme::Auto | ColorTheme::Light => (
-                false,
+                ActualThemeMode::Light,
                 *base_rgb,
                 Srgb::from_color(Lch::new(50.0, 50.0, base_lch.hue)),
             ),
         };
-        if dark {
-            println!("select dark default theme");
-        } else {
-            println!("select light default theme");
-        }
-        return (dark, bg, fg);
+
+        println!("select {actual_mode} default theme");
+        return (actual_mode, bg, fg);
     }
 
     let bg = Srgb::from_color(Lch::new(
@@ -80,17 +74,18 @@ pub fn generate_base(base_rgb: &Srgb, color_theme: &ColorTheme) -> (bool, Srgb, 
         base_lch.hue,
     ));
 
-    let dark = match color_theme {
-        ColorTheme::Auto => 42.0 < bg.compare(base_rgb),
-        ColorTheme::Dark => true,
-        ColorTheme::Light => false,
+    let actual_mode = match color_theme {
+        ColorTheme::Auto if 42.0 < bg.compare(base_rgb) => ActualThemeMode::Dark,
+        ColorTheme::Auto => ActualThemeMode::Light,
+        ColorTheme::Dark => ActualThemeMode::Dark,
+        ColorTheme::Light => ActualThemeMode::Light,
     };
 
-    let bg = if dark {
-        println!("select dark theme");
+    println!("select {actual_mode} theme");
+
+    let bg = if actual_mode == ActualThemeMode::Dark {
         bg
     } else {
-        println!("select light theme");
         Srgb::from_color(Lch::new(
             base_lch.l.max(95.0),
             base_lch.chroma.min(5.0),
@@ -99,5 +94,5 @@ pub fn generate_base(base_rgb: &Srgb, color_theme: &ColorTheme) -> (bool, Srgb, 
     };
 
     let fg = *base_rgb;
-    (dark, bg, fg)
+    (actual_mode, bg, fg)
 }

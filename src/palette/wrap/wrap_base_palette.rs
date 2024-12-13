@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     color::wrap::wrap_srgb::WrapSrgb,
     palette::base_palette::{BasePalette, PaletteColor},
+    model::ActualThemeMode,
 };
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -25,7 +26,7 @@ impl From<BasePalette> for WrapBasePalette {
     fn from(v: BasePalette) -> Self {
         Self {
             schema: "https://raw.githubusercontent.com/ecto0310/vscode_theme_generator/refs/heads/main/schema/palette.json".to_string(),
-            dark: v.dark,
+            dark: v.actual_mode == ActualThemeMode::Dark,
             bg: v.color_table[PaletteColor::Bg].into(),
             gray: v.color_table[PaletteColor::Gray].into(),
             blue: v.color_table[PaletteColor::Blue].into(),

@@ -13,6 +13,7 @@ use rand::rngs::ThreadRng;
 use crate::{
     cli::generate::ColorTheme,
     color::util::{generate_base, SrgbExt},
+    model::ActualThemeMode,
 };
 
 use super::wrap::wrap_base_palette::WrapBasePalette;
@@ -60,7 +61,7 @@ impl FromStr for PaletteColor {
 
 #[derive(Debug, Clone)]
 pub struct BasePalette {
-    pub dark: bool,
+    pub actual_mode: ActualThemeMode,
     pub color_table: enum_map::EnumMap<PaletteColor, Srgb>,
     pub score: f32,
 }
@@ -68,7 +69,11 @@ pub struct BasePalette {
 impl From<WrapBasePalette> for BasePalette {
     fn from(v: WrapBasePalette) -> Self {
         let mut palette = Self {
-            dark: v.dark,
+            actual_mode: if v.dark {
+                ActualThemeMode::Dark
+            } else {
+                ActualThemeMode::Light
+            },
             color_table: enum_map::enum_map! {
                 PaletteColor::Bg => v.bg.into() ,
                 PaletteColor::Gray => v.gray.into(),
@@ -89,7 +94,7 @@ impl From<WrapBasePalette> for BasePalette {
 
 impl BasePalette {
     pub fn new(base_rgb: &Srgb, color_theme: &ColorTheme, rng: &mut ThreadRng) -> Self {
-        let (dark, bg, fg) = generate_base(base_rgb, color_theme);
+        let (actual_mode, bg, fg) = generate_base(base_rgb, color_theme);
 
         let color_table = enum_map::enum_map! {
             PaletteColor::Bg => bg,
@@ -104,7 +109,7 @@ impl BasePalette {
         };
 
         let mut palette = Self {
-            dark,
+            actual_mode,
             color_table,
             score: 0.0,
         };
@@ -136,8 +141,9 @@ impl BasePalette {
         let (l, chroma) = self.fg_average();
         let bg = Lch::from_color(self.color_table[PaletteColor::Bg]);
         let base_rgb = Srgb::from_color(Lch::new(l, chroma, bg.hue));
-        let (dark, bg, _) = generate_base(&base_rgb, &ColorTheme::Auto);
-        self.dark = dark;
+
+        let (actual_mode, bg, _) = generate_base(&base_rgb, &ColorTheme::Auto);
+        self.actual_mode = actual_mode;
 
         for color in change_palette_element {
             if color.is_bg_color() {

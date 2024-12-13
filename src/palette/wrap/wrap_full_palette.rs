@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{color::wrap::wrap_srgb::WrapSrgb, palette::full_palette::FullPalette};
+use crate::{
+    color::wrap::wrap_srgb::WrapSrgb, model::ActualThemeMode, palette::full_palette::FullPalette,
+};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct WrapFullPalette {
@@ -23,7 +25,7 @@ impl From<FullPalette> for WrapFullPalette {
     fn from(v: FullPalette) -> Self {
         Self {
             schema: "https://raw.githubusercontent.com/ecto0310/vscode_theme_generator/refs/heads/main/schema/full_palette.json".to_string(),
-            dark: v.dark,
+            dark: v.actual_mode == ActualThemeMode::Dark,
             bg: v
                 .bg
                 .into_iter()
