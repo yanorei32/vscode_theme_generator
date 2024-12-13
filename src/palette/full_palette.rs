@@ -3,23 +3,21 @@ use std::{fs::File, io::Write, path::Path};
 use ::palette::Srgb;
 use palette::{FromColor as _, Lch};
 
-use super::{base_palette::{BasePalette, PaletteColor}, wrap::wrap_full_palette::WrapFullPalette};
+use super::{
+    base_palette::{BasePalette, PaletteColor},
+    wrap::wrap_full_palette::WrapFullPalette,
+};
 
 use crate::model::ActualThemeMode;
+
+use linearize::StaticMap;
 
 #[derive(Debug, Clone)]
 pub struct FullPalette {
     pub actual_mode: ActualThemeMode,
-    pub bg: Vec<Srgb>,
+
     pub fg: Vec<Srgb>,
-    pub gray: Vec<Srgb>,
-    pub blue: Vec<Srgb>,
-    pub green: Vec<Srgb>,
-    pub yellow: Vec<Srgb>,
-    pub orange: Vec<Srgb>,
-    pub red: Vec<Srgb>,
-    pub purple: Vec<Srgb>,
-    pub pink: Vec<Srgb>,
+    pub base_color_table: StaticMap<PaletteColor, Vec<Srgb>>,
 }
 
 impl From<BasePalette> for FullPalette {
@@ -28,7 +26,7 @@ impl From<BasePalette> for FullPalette {
             let lch = Lch::from_color(rgb);
             let width_cut = if double_width { 1.0 } else { 2.0 };
             let width = lch.l.min(100.0 - lch.l) / width_cut;
-            let mut ls = vec![
+            let mut ls = [
                 lch.l + width,
                 lch.l + width / 2.0,
                 lch.l,
@@ -47,16 +45,8 @@ impl From<BasePalette> for FullPalette {
 
         Self {
             actual_mode: v.actual_mode,
-            bg: generate(v.color_table[PaletteColor::Bg], true),
             fg: generate(fg, true),
-            gray: generate(v.color_table[PaletteColor::Gray], false),
-            blue: generate(v.color_table[PaletteColor::Blue], false),
-            green: generate(v.color_table[PaletteColor::Green], false),
-            yellow: generate(v.color_table[PaletteColor::Yellow], false),
-            orange: generate(v.color_table[PaletteColor::Orange], false),
-            red: generate(v.color_table[PaletteColor::Red], false),
-            purple: generate(v.color_table[PaletteColor::Purple], false),
-            pink: generate(v.color_table[PaletteColor::Pink], false),
+            base_color_table: v.color_table.map(|k, c| generate(c, k == PaletteColor::Bg)),
         }
     }
 }

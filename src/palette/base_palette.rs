@@ -6,9 +6,10 @@ use std::{
 };
 
 use enum_iterator::{all, Sequence};
-use enum_map::Enum;
 use palette::{FromColor, Lch, Srgb};
 use rand::rngs::ThreadRng;
+use serde::{Deserialize, Serialize};
+use linearize::{Linearize, StaticMap, static_map};
 
 use crate::{
     cli::generate::ColorTheme,
@@ -18,7 +19,8 @@ use crate::{
 
 use super::wrap::wrap_base_palette::WrapBasePalette;
 
-#[derive(Debug, Clone, Copy, Enum, Eq, PartialEq, Sequence)]
+#[derive(Debug, Clone, Copy, Linearize, Eq, PartialEq, Sequence, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum PaletteColor {
     Bg,
     Gray,
@@ -62,7 +64,7 @@ impl FromStr for PaletteColor {
 #[derive(Debug, Clone)]
 pub struct BasePalette {
     pub actual_mode: ActualThemeMode,
-    pub color_table: enum_map::EnumMap<PaletteColor, Srgb>,
+    pub color_table: StaticMap<PaletteColor, Srgb>,
     pub score: f32,
 }
 
@@ -74,17 +76,7 @@ impl From<WrapBasePalette> for BasePalette {
             } else {
                 ActualThemeMode::Light
             },
-            color_table: enum_map::enum_map! {
-                PaletteColor::Bg => v.bg.into() ,
-                PaletteColor::Gray => v.gray.into(),
-                PaletteColor::Blue => v.blue.into(),
-                PaletteColor::Green => v.green.into(),
-                PaletteColor::Yellow => v.yellow.into(),
-                PaletteColor::Orange => v.orange.into(),
-                PaletteColor::Red => v.red.into(),
-                PaletteColor::Purple => v.purple.into(),
-                PaletteColor::Pink => v.pink.into(),
-            },
+            color_table: v.color_table.map_values(|v| v.into()),
             score: 0.0,
         };
         palette.calc_full_score();
@@ -96,16 +88,11 @@ impl BasePalette {
     pub fn new(base_rgb: &Srgb, color_theme: &ColorTheme, rng: &mut ThreadRng) -> Self {
         let (actual_mode, bg, fg) = generate_base(base_rgb, color_theme);
 
-        let color_table = enum_map::enum_map! {
+        let color_table = static_map! {
             PaletteColor::Bg => bg,
             PaletteColor::Gray => fg,
-            PaletteColor::Blue => fg.new_by_random_hue(rng),
-            PaletteColor::Green => fg.new_by_random_hue(rng),
-            PaletteColor::Yellow => fg.new_by_random_hue(rng),
-            PaletteColor::Orange => fg.new_by_random_hue(rng),
-            PaletteColor::Red => fg.new_by_random_hue(rng),
-            PaletteColor::Purple => fg.new_by_random_hue(rng),
-            PaletteColor::Pink => fg.new_by_random_hue(rng),
+            // TODO: これで動いてるか確認する
+            _ => fg.new_by_random_hue(rng),
         };
 
         let mut palette = Self {
