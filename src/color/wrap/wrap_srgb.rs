@@ -18,6 +18,12 @@ impl WrapSrgb {
             alpha,
         }
     }
+
+    pub fn alpha(&self, alpha: f32) -> Self {
+        let mut color = *self;
+        color.alpha = alpha;
+        color
+    }
 }
 
 impl From<Srgb> for WrapSrgb {
