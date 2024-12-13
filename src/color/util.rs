@@ -3,27 +3,35 @@ use rand::{rngs::ThreadRng, Rng};
 
 use crate::cli::generate::ColorTheme;
 
-pub fn generate_random_color(base_rgb: Srgb, rng: &mut ThreadRng) -> Srgb {
-    let hue = rng.gen_range(0.0..360.0);
-    generate_color(base_rgb, hue)
+pub trait SrgbExt {
+    fn compare(&self, other: &Self) -> f32;
+    fn new_with_hue(&self, hue: f32) -> Self;
+    fn new_by_random_hue(&self, rng: &mut ThreadRng) -> Self;
 }
 
-pub fn generate_color(base_rgb: Srgb, hue: f32) -> Srgb {
-    let base_lch = Lch::from_color(base_rgb);
-    Srgb::from_color(Lch::new(base_lch.l, base_lch.chroma, hue))
-}
+impl SrgbExt for Srgb {
+    fn compare(&self, other: &Self) -> f32 {
+        let this = Lch::from_color(*self);
+        let other = Lch::from_color(*other);
+        this.difference(other)
+    }
 
-pub fn compare(this: &Srgb, other: &Srgb) -> f32 {
-    let this = Lch::from_color(*this);
-    let other = Lch::from_color(*other);
-    this.difference(other)
+    fn new_with_hue(&self, hue: f32) -> Self {
+        let base_lch = Lch::from_color(*self);
+        Self::from_color(Lch::new(base_lch.l, base_lch.chroma, hue))
+    }
+
+    fn new_by_random_hue(&self, rng: &mut ThreadRng) -> Self {
+        let hue = rng.gen_range(0.0..360.0);
+        self.new_with_hue(hue)
+    }
 }
 
 pub fn generate_base(base_rgb: &Srgb, color_theme: &ColorTheme) -> (bool, Srgb, Srgb) {
-    let black = Srgb::new(0.0, 0.0, 0.0);
-    let white: palette::rgb::Rgb = Srgb::new(1.0, 1.0, 1.0);
     let base_lch = Lch::from_color(*base_rgb);
-    if compare(&black, base_rgb) < 10.5 {
+
+    let black = Srgb::new(0.0, 0.0, 0.0);
+    if black.compare(base_rgb) < 10.5 {
         let (dark, bg, fg) = match color_theme {
             ColorTheme::Auto | ColorTheme::Dark => (
                 true,
@@ -43,7 +51,9 @@ pub fn generate_base(base_rgb: &Srgb, color_theme: &ColorTheme) -> (bool, Srgb, 
         }
         return (dark, bg, fg);
     }
-    if compare(&white, base_rgb) < 10.5 {
+
+    let white = Srgb::new(1.0, 1.0, 1.0);
+    if white.compare(base_rgb) < 10.5 {
         let (dark, bg, fg) = match color_theme {
             ColorTheme::Dark => (
                 true,
@@ -64,14 +74,14 @@ pub fn generate_base(base_rgb: &Srgb, color_theme: &ColorTheme) -> (bool, Srgb, 
         return (dark, bg, fg);
     }
 
-    let base_lch: Lch = Lch::from_color(*base_rgb);
     let bg = Srgb::from_color(Lch::new(
         base_lch.l.min(10.0),
         base_lch.chroma.min(10.0),
         base_lch.hue,
     ));
+
     let dark = match color_theme {
-        ColorTheme::Auto => 42.0 < compare(&bg, base_rgb),
+        ColorTheme::Auto => 42.0 < bg.compare(base_rgb),
         ColorTheme::Dark => true,
         ColorTheme::Light => false,
     };
@@ -87,6 +97,7 @@ pub fn generate_base(base_rgb: &Srgb, color_theme: &ColorTheme) -> (bool, Srgb, 
             base_lch.hue,
         ))
     };
+
     let fg = *base_rgb;
     (dark, bg, fg)
 }

@@ -12,7 +12,7 @@ use rand::rngs::ThreadRng;
 
 use crate::{
     cli::generate::ColorTheme,
-    color::util::{compare, generate_base, generate_random_color},
+    color::util::{generate_base, SrgbExt},
 };
 
 use super::wrap::wrap_base_palette::WrapBasePalette;
@@ -94,13 +94,13 @@ impl BasePalette {
         let color_table = enum_map::enum_map! {
             PaletteColor::Bg => bg,
             PaletteColor::Gray => fg,
-            PaletteColor::Blue => generate_random_color(fg, rng),
-            PaletteColor::Green => generate_random_color(fg, rng),
-            PaletteColor::Yellow => generate_random_color(fg, rng),
-            PaletteColor::Orange => generate_random_color(fg, rng),
-            PaletteColor::Red => generate_random_color(fg, rng),
-            PaletteColor::Purple => generate_random_color(fg, rng),
-            PaletteColor::Pink => generate_random_color(fg, rng),
+            PaletteColor::Blue => fg.new_by_random_hue(rng),
+            PaletteColor::Green => fg.new_by_random_hue(rng),
+            PaletteColor::Yellow => fg.new_by_random_hue(rng),
+            PaletteColor::Orange => fg.new_by_random_hue(rng),
+            PaletteColor::Red => fg.new_by_random_hue(rng),
+            PaletteColor::Purple => fg.new_by_random_hue(rng),
+            PaletteColor::Pink => fg.new_by_random_hue(rng),
         };
 
         let mut palette = Self {
@@ -143,7 +143,7 @@ impl BasePalette {
             if color.is_bg_color() {
                 self.update_color(*color, bg);
             } else {
-                let select_rgb = generate_random_color(base_rgb, rng);
+                let select_rgb = base_rgb.new_by_random_hue(rng);
                 self.update_color(*color, select_rgb);
             }
         }
@@ -155,7 +155,7 @@ impl BasePalette {
         for (nth, color_a) in all::<PaletteColor>().enumerate() {
             for color_b in all::<PaletteColor>().skip(nth + 1) {
                 let p = if color_a.is_bg_color() { 42.0 } else { 21.0 };
-                self.score += (compare(&self.color_table[color_a], &self.color_table[color_b]) / p)
+                self.score += (self.color_table[color_a].compare(&self.color_table[color_b]) / p)
                     .log10()
                     .min(0.0)
                     * 1000000.0;

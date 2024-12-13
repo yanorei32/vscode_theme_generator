@@ -36,6 +36,7 @@ pub enum ColorTheme {
     Light,
 }
 
+
 impl TryFrom<GenerateArgs> for ParseGenerateArgs {
     type Error = anyhow::Error;
 
