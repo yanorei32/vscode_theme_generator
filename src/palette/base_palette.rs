@@ -1,7 +1,7 @@
 use std::{
     fs::File,
     io::{Read, Write},
-    path::PathBuf,
+    path::Path,
     str::FromStr,
 };
 
@@ -117,7 +117,7 @@ impl BasePalette {
         palette
     }
 
-    pub fn export(&self, path: &PathBuf) -> anyhow::Result<()> {
+    pub fn export(&self, path: &Path) -> anyhow::Result<()> {
         let wrap_palette = WrapBasePalette::from(self.clone());
         let palette_str = serde_json::to_string(&wrap_palette)?;
         let mut palette_file = File::create(path)?;
@@ -125,7 +125,7 @@ impl BasePalette {
         Ok(())
     }
 
-    pub fn load(path: &PathBuf) -> anyhow::Result<Self> {
+    pub fn load(path: &Path) -> anyhow::Result<Self> {
         let mut palette_file = File::open(path).expect("file not found");
         let mut palette_str = String::new();
         palette_file.read_to_string(&mut palette_str)?;

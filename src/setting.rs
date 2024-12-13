@@ -1,4 +1,4 @@
-use std::{fs::File, io::Write, path::PathBuf};
+use std::{fs::File, io::Write, path::Path};
 
 use editor_token_color_customizations::EditorTokenColorCustomizations;
 use serde::Serialize;
@@ -33,7 +33,7 @@ impl Setting {
         }
     }
 
-    pub fn export(&self, path: &PathBuf) -> anyhow::Result<()> {
+    pub fn export(&self, path: &Path) -> anyhow::Result<()> {
         let settinge_str = serde_json::to_string(&self)?;
         let mut setting_file = File::create(path)?;
         writeln!(setting_file, "{}", settinge_str)?;

@@ -1,4 +1,4 @@
-use std::{fs::File, io::Write, path::PathBuf};
+use std::{fs::File, io::Write, path::Path};
 
 use ::palette::Srgb;
 use palette::{FromColor as _, Lch};
@@ -60,7 +60,7 @@ impl From<BasePalette> for FullPalette {
 }
 
 impl FullPalette {
-    pub fn export(&self, path: &PathBuf) -> anyhow::Result<()> {
+    pub fn export(&self, path: &Path) -> anyhow::Result<()> {
         let wrap_palette: WrapFullPalette = self.clone().into();
         let palette_str = serde_json::to_string(&wrap_palette)?;
         let mut palette_file = File::create(path)?;
