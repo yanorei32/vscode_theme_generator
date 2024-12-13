@@ -143,17 +143,18 @@ impl BasePalette {
     }
 
     pub fn calc_full_score(&mut self) {
-        self.score = 0.0;
-
         // TODO: これが期待通りに動いているか確認する
         use itertools::Itertools;
-        for (a, b) in all::<PaletteColor>().tuple_combinations() {
-            let p = if a.is_bg_color() { 42.0 } else { 21.0 };
-            self.score += (self.color_table[a].compare(&self.color_table[b]) / p)
-                .log10()
-                .min(0.0)
-                * 1000000.0;
-        }
+
+        self.score = all::<PaletteColor>()
+            .tuple_combinations()
+            .map(|(a, b)| {
+                let diff = self.color_table[a].compare(&self.color_table[b]);
+                let p = if a.is_bg_color() { 42.0 } else { 21.0 };
+
+                (diff / p).log10().min(0.0) * 1000000.0
+            })
+            .sum();
 
         let (l_ave, chroma_ave) = self.fg_average();
 
