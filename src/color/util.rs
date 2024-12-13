@@ -12,9 +12,7 @@ pub trait SrgbExt {
 
 impl SrgbExt for Srgb {
     fn compare(&self, other: &Self) -> f32 {
-        let this = Lch::from_color(*self);
-        let other = Lch::from_color(*other);
-        this.difference(other)
+        Lch::from_color(*self).difference(Lch::from_color(*other))
     }
 
     fn new_with_hue(&self, hue: f32) -> Self {
