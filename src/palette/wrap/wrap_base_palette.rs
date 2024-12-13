@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{color::wrap::wrap_srgb::WrapSrgb, palette::base_palette::BasePalette};
+use crate::{
+    color::wrap::wrap_srgb::WrapSrgb,
+    palette::base_palette::{BasePalette, PaletteColor},
+};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct WrapBasePalette {
@@ -23,15 +26,15 @@ impl From<BasePalette> for WrapBasePalette {
         Self {
             schema: "https://raw.githubusercontent.com/ecto0310/vscode_theme_generator/refs/heads/main/schema/palette.json".to_string(),
             dark: v.dark,
-            bg: v.bg.into(),
-            gray: v.gray.into(),
-            blue: v.blue.into(),
-            green: v.green.into(),
-            yellow: v.yellow.into(),
-            orange: v.orange.into(),
-            red: v.red.into(),
-            purple: v.purple.into(),
-            pink: v.pink.into(),
+            bg: v.color_table[PaletteColor::Bg].into(),
+            gray: v.color_table[PaletteColor::Gray].into(),
+            blue: v.color_table[PaletteColor::Blue].into(),
+            green: v.color_table[PaletteColor::Green].into(),
+            yellow: v.color_table[PaletteColor::Yellow].into(),
+            orange: v.color_table[PaletteColor::Orange].into(),
+            red: v.color_table[PaletteColor::Red].into(),
+            purple: v.color_table[PaletteColor::Purple].into(),
+            pink: v.color_table[PaletteColor::Pink].into(),
         }
     }
 }

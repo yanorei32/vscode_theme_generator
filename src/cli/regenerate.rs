@@ -5,7 +5,10 @@ use clap::Args;
 use super::Cli;
 use crate::{
     optimize::base_palette::optimize_base_palette,
-    palette::{base_palette::BasePalette, full_palette::FullPalette},
+    palette::{
+        base_palette::{BasePalette, PaletteColor},
+        full_palette::FullPalette,
+    },
     setting::Setting,
 };
 
@@ -19,7 +22,7 @@ pub struct RegenerateArgs {
 }
 
 pub struct ParseRegenerateArgs {
-    pub fixs: Vec<usize>,
+    pub fixs: Vec<PaletteColor>,
     pub no_saturation_fg: bool,
 }
 
@@ -28,7 +31,7 @@ impl TryFrom<RegenerateArgs> for ParseRegenerateArgs {
 
     fn try_from(v: RegenerateArgs) -> Result<Self, Self::Error> {
         Ok(Self {
-            fixs: BasePalette::parse_id(&v.fixs),
+            fixs: v.fixs.iter().filter_map(|v| v.parse().ok()).collect(),
             no_saturation_fg: v.no_saturation_fg,
         })
     }
@@ -48,7 +51,7 @@ impl Cli {
         let mut palette = BasePalette::load(&palette_path)?;
         if !args.fixs.is_empty() {
             palette.renew(&args.fixs, &mut rng);
-            optimize_base_palette(&mut palette, args.fixs, 100, &mut rng)?;
+            optimize_base_palette(&mut palette, &args.fixs, 100, &mut rng)?;
         }
         palette.export(&palette_path)?;
 

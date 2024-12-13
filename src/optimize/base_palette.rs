@@ -4,11 +4,11 @@ use anyhow::anyhow;
 use palette::{FromColor, IntoColor, Lch};
 use rand::{rngs::ThreadRng, seq::SliceRandom, Rng};
 
-use crate::palette::base_palette::BasePalette;
+use crate::palette::base_palette::{BasePalette, PaletteColor};
 
 pub fn optimize_base_palette(
     best_palette: &mut BasePalette,
-    change_palette_element: Vec<usize>,
+    change_palette_element: &[PaletteColor],
     time_limit: u64,
     rng: &mut ThreadRng,
 ) -> anyhow::Result<()> {
@@ -20,7 +20,8 @@ pub fn optimize_base_palette(
 
     let mut count = 0;
 
-    let mut now_palette = *best_palette;
+    let mut now_palette = best_palette.clone();
+
     while start.elapsed() < time_limit {
         let next_palette = generate_base_palette(&now_palette, &change_palette_element, rng)?;
         let temp = start_temp
@@ -32,7 +33,7 @@ pub fn optimize_base_palette(
             now_palette = next_palette;
         }
         if best_palette.score < now_palette.score {
-            *best_palette = now_palette;
+            *best_palette = now_palette.clone();
         }
         count += 1;
     }
@@ -65,16 +66,15 @@ impl ChangeType {
 }
 
 pub fn generate_base_palette(
-    now_palette: &BasePalette,
-    change_palette_element: &[usize],
+    palette: &BasePalette,
+    change_palette_element: &[PaletteColor],
     rng: &mut ThreadRng,
 ) -> anyhow::Result<BasePalette> {
-    let mut next_palette = *now_palette;
     let select = change_palette_element
         .choose(rng)
         .ok_or(anyhow!("Failed to select a color to change"))?;
     let change_type = ChangeType::random(rng)?;
-    let rgb = now_palette.get_color(*select);
+    let rgb = palette.get_color(*select);
     let mut lch = Lch::from_color(rgb);
     match change_type {
         ChangeType::IncL => lch.l = (lch.l + 2.0).clamp(0.0, 100.0),
@@ -84,6 +84,7 @@ pub fn generate_base_palette(
         ChangeType::IncH => lch.hue += 3.0,
         ChangeType::DecH => lch.hue -= 3.0,
     }
-    next_palette.update_color(*select, lch.into_color());
-    Ok(next_palette)
+    let mut palette = palette.clone();
+    palette.update_color(*select, lch.into_color());
+    Ok(palette)
 }

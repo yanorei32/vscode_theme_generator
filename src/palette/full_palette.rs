@@ -3,7 +3,7 @@ use std::{fs::File, io::Write, path::PathBuf};
 use ::palette::Srgb;
 use palette::{FromColor as _, Lch};
 
-use super::{base_palette::BasePalette, wrap::wrap_full_palette::WrapFullPalette};
+use super::{base_palette::{BasePalette, PaletteColor}, wrap::wrap_full_palette::WrapFullPalette};
 
 #[derive(Debug, Clone)]
 pub struct FullPalette {
@@ -45,16 +45,16 @@ impl From<BasePalette> for FullPalette {
 
         Self {
             dark: v.dark,
-            bg: generate(v.bg, true),
+            bg: generate(v.color_table[PaletteColor::Bg], true),
             fg: generate(fg, true),
-            gray: generate(v.gray, false),
-            blue: generate(v.blue, false),
-            green: generate(v.green, false),
-            yellow: generate(v.yellow, false),
-            orange: generate(v.orange, false),
-            red: generate(v.red, false),
-            purple: generate(v.purple, false),
-            pink: generate(v.pink, false),
+            gray: generate(v.color_table[PaletteColor::Gray], false),
+            blue: generate(v.color_table[PaletteColor::Blue], false),
+            green: generate(v.color_table[PaletteColor::Green], false),
+            yellow: generate(v.color_table[PaletteColor::Yellow], false),
+            orange: generate(v.color_table[PaletteColor::Orange], false),
+            red: generate(v.color_table[PaletteColor::Red], false),
+            purple: generate(v.color_table[PaletteColor::Purple], false),
+            pink: generate(v.color_table[PaletteColor::Pink], false),
         }
     }
 }

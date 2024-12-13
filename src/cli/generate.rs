@@ -6,7 +6,10 @@ use palette::Srgb;
 use super::Cli;
 use crate::{
     optimize::base_palette::optimize_base_palette,
-    palette::{base_palette::BasePalette, full_palette::FullPalette},
+    palette::{
+        base_palette::{BasePalette, PaletteColor},
+        full_palette::FullPalette,
+    },
     setting::Setting,
 };
 
@@ -46,6 +49,8 @@ impl TryFrom<GenerateArgs> for ParseGenerateArgs {
     }
 }
 
+use enum_iterator::all;
+
 impl Cli {
     pub fn generate(args: &GenerateArgs) -> anyhow::Result<()> {
         let args = ParseGenerateArgs::try_from(args.clone())?;
@@ -58,7 +63,15 @@ impl Cli {
         let setting_path = path_prefix.join("settings.json");
 
         let mut palette = BasePalette::new(&args.rgb, &args.color_theme, &mut rng);
-        optimize_base_palette(&mut palette, (2..9).collect(), 100, &mut rng)?;
+        optimize_base_palette(
+            &mut palette,
+            &all::<PaletteColor>()
+                .filter(|v| v.is_colorized())
+                .collect::<Vec<_>>(),
+            100,
+            &mut rng,
+        )?;
+
         palette.export(&palette_path)?;
 
         let full_palette = FullPalette::from(palette);

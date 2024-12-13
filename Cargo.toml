@@ -6,6 +6,8 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.89"
 clap = { version = "4.5.20", features = ["derive"] }
+enum-iterator = "2.1.0"
+enum-map = "2.7.3"
 palette = "0.7.6"
 rand = "0.8.5"
 serde = { version = "1.0.210", features = ["derive"] }
