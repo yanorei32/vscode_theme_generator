@@ -25,9 +25,11 @@ pub fn generate_base(base_rgb: &Srgb, color_theme: &ColorTheme) -> (bool, Srgb, 
     let base_lch = Lch::from_color(*base_rgb);
     if compare(&black, base_rgb) < 10.5 {
         let (dark, bg, fg) = match color_theme {
-            ColorTheme::Auto | ColorTheme::Dark => {
-                (true, *base_rgb, Srgb::from_color(Lch::new(50.0, 50.0, base_lch.hue)))
-            }
+            ColorTheme::Auto | ColorTheme::Dark => (
+                true,
+                *base_rgb,
+                Srgb::from_color(Lch::new(50.0, 50.0, base_lch.hue)),
+            ),
             ColorTheme::Light => (
                 false,
                 Srgb::from_color(Lch::new(95.0, 5.0, base_lch.hue)),

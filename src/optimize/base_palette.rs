@@ -25,7 +25,7 @@ pub fn optimize_base_palette(
         let next_palette = generate_base_palette(&now_palette, change_palette_element, rng)?;
         let temp = start_temp
             + (end_temp - start_temp)
-                * ((start.elapsed().as_micros() as f32 / time_limit.as_micros() as f32));
+                * (start.elapsed().as_micros() as f32 / time_limit.as_micros() as f32);
         let diff = next_palette.score - now_palette.score;
         let r: f32 = rng.gen();
         if r < (diff / temp).exp() || now_palette.score < next_palette.score {
