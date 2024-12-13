@@ -11,11 +11,7 @@ use palette::{FromColor, Lch, Srgb};
 use rand::rngs::ThreadRng;
 use serde::{Deserialize, Serialize};
 
-use crate::{
-    cli::generate::ColorTheme,
-    color::util::{generate_base, SrgbExt},
-    model::ActualThemeMode,
-};
+use crate::{cli::generate::ColorTheme, color::util::SrgbExt, model::ActualThemeMode};
 
 use super::wrap::wrap_base_palette::WrapBasePalette;
 
@@ -86,7 +82,7 @@ impl From<WrapBasePalette> for BasePalette {
 
 impl BasePalette {
     pub fn new(base_rgb: &Srgb, color_theme: &ColorTheme, rng: &mut ThreadRng) -> Self {
-        let (actual_mode, bg, fg) = generate_base(base_rgb, color_theme);
+        let (actual_mode, bg, fg) = base_rgb.theme_color_for(color_theme);
 
         let color_table = static_map! {
             PaletteColor::Bg => bg,
@@ -129,7 +125,7 @@ impl BasePalette {
         let bg = Lch::from_color(self.color_table[PaletteColor::Bg]);
         let base_rgb = Srgb::from_color(Lch::new(l, chroma, bg.hue));
 
-        let (actual_mode, bg, _) = generate_base(&base_rgb, &ColorTheme::Auto);
+        let (actual_mode, bg, _) = base_rgb.theme_color_for(&ColorTheme::Auto);
         self.actual_mode = actual_mode;
 
         for color in change_palette_element {
