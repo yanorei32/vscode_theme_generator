@@ -2,65 +2,23 @@ use std::{
     fs::File,
     io::{Read, Write},
     path::Path,
-    str::FromStr,
 };
 
-use enum_iterator::{all, Sequence};
-use linearize::{static_map, Linearize, StaticMap};
+use enum_iterator::all;
+use linearize::{static_map, StaticMap};
 use palette::{FromColor, Lch, Srgb};
 use rand::rngs::ThreadRng;
-use serde::{Deserialize, Serialize};
 
-use crate::{cli::generate::ColorTheme, color::util::SrgbExt, model::ActualThemeMode};
+use crate::{
+    cli::generate::ColorTheme, color::Color, model::ActualThemeMode, util::SrgbExt,
+};
 
 use super::wrap::wrap_base_palette::WrapBasePalette;
-
-#[derive(Debug, Clone, Copy, Linearize, Eq, PartialEq, Sequence, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum PaletteColor {
-    Bg,
-    Gray,
-    Blue,
-    Green,
-    Yellow,
-    Orange,
-    Red,
-    Purple,
-    Pink,
-}
-
-impl PaletteColor {
-    pub fn is_bg_color(&self) -> bool {
-        *self == Self::Bg
-    }
-
-    pub fn is_colorized(&self) -> bool {
-        !matches!(self, Self::Bg | Self::Gray)
-    }
-}
-
-impl FromStr for PaletteColor {
-    type Err = ();
-    fn from_str(value: &str) -> Result<Self, Self::Err> {
-        Ok(match value {
-            "bg" => Self::Bg,
-            "gray" => Self::Gray,
-            "blue" => Self::Blue,
-            "green" => Self::Green,
-            "yellow" => Self::Yellow,
-            "orange" => Self::Orange,
-            "red" => Self::Red,
-            "purple" => Self::Purple,
-            "pink" => Self::Pink,
-            _ => return Err(()),
-        })
-    }
-}
 
 #[derive(Debug, Clone)]
 pub struct BasePalette {
     pub actual_mode: ActualThemeMode,
-    pub color_table: StaticMap<PaletteColor, Srgb>,
+    pub color_table: StaticMap<Color, Srgb>,
     pub score: f32,
 }
 
@@ -85,8 +43,8 @@ impl BasePalette {
         let (actual_mode, bg, fg) = base_rgb.theme_color_for(color_theme);
 
         let color_table = static_map! {
-            PaletteColor::Bg => bg,
-            PaletteColor::Gray => fg,
+            Color::Bg => bg,
+            Color::Gray => fg,
             // TODO: これで動いてるか確認する
             _ => fg.new_by_random_hue(rng),
         };
@@ -120,9 +78,9 @@ impl BasePalette {
         Ok(palette)
     }
 
-    pub fn renew(&mut self, change_palette_element: &[PaletteColor], rng: &mut ThreadRng) {
+    pub fn renew(&mut self, change_palette_element: &[Color], rng: &mut ThreadRng) {
         let (l, chroma) = self.fg_average();
-        let bg = Lch::from_color(self.color_table[PaletteColor::Bg]);
+        let bg = Lch::from_color(self.color_table[Color::Bg]);
         let base_rgb = Srgb::from_color(Lch::new(l, chroma, bg.hue));
 
         let (actual_mode, bg, _) = base_rgb.theme_color_for(&ColorTheme::Auto);
@@ -142,7 +100,7 @@ impl BasePalette {
         // TODO: これが期待通りに動いているか確認する
         use itertools::Itertools;
 
-        self.score = all::<PaletteColor>()
+        self.score = all::<Color>()
             .tuple_combinations()
             .map(|(a, b)| {
                 let diff = self.color_table[a].compare(&self.color_table[b]);
@@ -169,17 +127,17 @@ impl BasePalette {
         self.score -= l_point * 10000000.0 + chroma_point * 10000000.0;
     }
 
-    pub fn get_color(&self, c: PaletteColor) -> Srgb {
+    pub fn get_color(&self, c: Color) -> Srgb {
         self.color_table[c]
     }
 
-    pub fn update_color(&mut self, c: PaletteColor, color: Srgb) {
+    pub fn update_color(&mut self, c: Color, color: Srgb) {
         self.color_table[c] = color;
         self.calc_full_score();
     }
 
     pub fn fg_average(&self) -> (f32, f32) {
-        let n = all::<PaletteColor>().filter(|c| c.is_colorized()).count() as f32;
+        let n = all::<Color>().filter(|c| c.is_colorized()).count() as f32;
 
         self.color_table
             .iter()

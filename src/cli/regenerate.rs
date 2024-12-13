@@ -4,11 +4,9 @@ use clap::Args;
 
 use super::Cli;
 use crate::{
+    color::Color,
     optimize::base_palette::optimize_base_palette,
-    palette::{
-        base_palette::{BasePalette, PaletteColor},
-        full_palette::FullPalette,
-    },
+    palette::{base_palette::BasePalette, full_palette::FullPalette},
     setting::Setting,
 };
 
@@ -22,7 +20,7 @@ pub struct RegenerateArgs {
 }
 
 pub struct ParseRegenerateArgs {
-    pub fixs: Vec<PaletteColor>,
+    pub fixs: Vec<Color>,
     pub no_saturation_fg: bool,
 }
 

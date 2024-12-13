@@ -2,14 +2,13 @@ use std::{fs::create_dir_all, path::Path, str::FromStr};
 
 use clap::{Args, ValueEnum};
 use palette::Srgb;
+use enum_iterator::all;
 
-use super::Cli;
 use crate::{
+    cli::Cli,
+    color::Color,
     optimize::base_palette::optimize_base_palette,
-    palette::{
-        base_palette::{BasePalette, PaletteColor},
-        full_palette::FullPalette,
-    },
+    palette::{base_palette::BasePalette, full_palette::FullPalette},
     setting::Setting,
 };
 
@@ -36,7 +35,6 @@ pub enum ColorTheme {
     Light,
 }
 
-
 impl TryFrom<GenerateArgs> for ParseGenerateArgs {
     type Error = anyhow::Error;
 
@@ -49,8 +47,6 @@ impl TryFrom<GenerateArgs> for ParseGenerateArgs {
         })
     }
 }
-
-use enum_iterator::all;
 
 impl Cli {
     pub fn generate(args: &GenerateArgs) -> anyhow::Result<()> {
@@ -66,7 +62,7 @@ impl Cli {
         let mut palette = BasePalette::new(&args.rgb, &args.color_theme, &mut rng);
         optimize_base_palette(
             &mut palette,
-            &all::<PaletteColor>()
+            &all::<Color>()
                 .filter(|v| v.is_colorized())
                 .collect::<Vec<_>>(),
             100,

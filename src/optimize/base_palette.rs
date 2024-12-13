@@ -4,11 +4,11 @@ use anyhow::anyhow;
 use palette::{FromColor, IntoColor, Lch};
 use rand::{rngs::ThreadRng, seq::SliceRandom, Rng};
 
-use crate::palette::base_palette::{BasePalette, PaletteColor};
+use crate::{color::Color, palette::base_palette::BasePalette};
 
 pub fn optimize_base_palette(
     best_palette: &mut BasePalette,
-    change_palette_element: &[PaletteColor],
+    change_palette_element: &[Color],
     time_limit: u64,
     rng: &mut ThreadRng,
 ) -> anyhow::Result<()> {
@@ -23,7 +23,7 @@ pub fn optimize_base_palette(
     let mut now_palette = best_palette.clone();
 
     while start.elapsed() < time_limit {
-        let next_palette = generate_base_palette(&now_palette, &change_palette_element, rng)?;
+        let next_palette = generate_base_palette(&now_palette, change_palette_element, rng)?;
         let temp = start_temp
             + (end_temp - start_temp)
                 * (start.elapsed().as_micros() as f32 / time_limit.as_micros() as f32);
@@ -67,7 +67,7 @@ impl ChangeType {
 
 pub fn generate_base_palette(
     palette: &BasePalette,
-    change_palette_element: &[PaletteColor],
+    change_palette_element: &[Color],
     rng: &mut ThreadRng,
 ) -> anyhow::Result<BasePalette> {
     let select = change_palette_element

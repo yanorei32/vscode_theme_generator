@@ -7,6 +7,7 @@ mod optimize;
 mod palette;
 mod setting;
 mod model;
+mod util;
 
 fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();

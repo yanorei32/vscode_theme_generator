@@ -3,10 +3,8 @@ use std::{fs::File, io::Write, path::Path};
 use ::palette::Srgb;
 use palette::{FromColor as _, Lch};
 
-use super::{
-    base_palette::{BasePalette, PaletteColor},
-    wrap::wrap_full_palette::WrapFullPalette,
-};
+use super::{base_palette::BasePalette, wrap::wrap_full_palette::WrapFullPalette};
+use crate::color::Color;
 
 use crate::model::ActualThemeMode;
 
@@ -17,7 +15,7 @@ pub struct FullPalette {
     pub actual_mode: ActualThemeMode,
 
     pub fg: Vec<Srgb>,
-    pub base_color_table: StaticMap<PaletteColor, Vec<Srgb>>,
+    pub base_color_table: StaticMap<Color, Vec<Srgb>>,
 }
 
 impl From<BasePalette> for FullPalette {
@@ -46,7 +44,7 @@ impl From<BasePalette> for FullPalette {
         Self {
             actual_mode: v.actual_mode,
             fg: generate(fg, true),
-            base_color_table: v.color_table.map(|k, c| generate(c, k == PaletteColor::Bg)),
+            base_color_table: v.color_table.map(|k, c| generate(c, k == Color::Bg)),
         }
     }
 }

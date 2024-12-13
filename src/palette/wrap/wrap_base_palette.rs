@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    color::wrap::wrap_srgb::WrapSrgb,
+    color::{Color, SrgbA},
     model::ActualThemeMode,
-    palette::base_palette::{BasePalette, PaletteColor},
+    palette::base_palette::BasePalette,
 };
 
 use linearize::StaticMap;
@@ -16,7 +16,7 @@ pub struct WrapBasePalette {
     pub dark: bool,
 
     #[serde(flatten)]
-    pub color_table: StaticMap<PaletteColor, WrapSrgb>,
+    pub color_table: StaticMap<Color, SrgbA>,
 }
 
 impl From<BasePalette> for WrapBasePalette {
