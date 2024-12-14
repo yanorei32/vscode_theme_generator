@@ -1,6 +1,6 @@
 use std::fmt::{self, Display, Error as FmtError, Formatter};
-use std::str::FromStr;
 
+use clap::ValueEnum;
 use enum_iterator::Sequence;
 use linearize::{Linearize, StaticMap};
 use palette::{Srgb, Srgba, WithAlpha};
@@ -33,7 +33,7 @@ impl Display for ActualThemeMode {
     }
 }
 
-#[derive(Debug, Clone, Copy, Linearize, Eq, PartialEq, Sequence, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Linearize, Eq, PartialEq, Sequence, Serialize, Deserialize, ValueEnum)]
 #[serde(rename_all = "snake_case")]
 pub enum Color {
     Bg,
@@ -54,24 +54,6 @@ impl Color {
 
     pub fn is_colorized(&self) -> bool {
         !matches!(self, Self::Bg | Self::Gray)
-    }
-}
-
-impl FromStr for Color {
-    type Err = ();
-    fn from_str(value: &str) -> Result<Self, Self::Err> {
-        Ok(match value {
-            "bg" => Self::Bg,
-            "gray" => Self::Gray,
-            "blue" => Self::Blue,
-            "green" => Self::Green,
-            "yellow" => Self::Yellow,
-            "orange" => Self::Orange,
-            "red" => Self::Red,
-            "purple" => Self::Purple,
-            "pink" => Self::Pink,
-            _ => return Err(()),
-        })
     }
 }
 

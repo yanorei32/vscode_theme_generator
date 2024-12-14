@@ -1,4 +1,4 @@
-use std::{fs::create_dir_all, path::Path, str::FromStr};
+use std::{fs::create_dir_all, path::Path};
 
 use clap::{Args, ValueEnum};
 use palette::Srgb;
@@ -14,16 +14,10 @@ use crate::{
 #[derive(Debug, Clone, Args)]
 
 pub struct GenerateArgs {
-    pub rgb: String,
+    pub rgb: Srgb<u8>,
     #[arg(short, long)]
     pub no_saturation_fg: bool,
     #[arg(short, long, default_value = "auto")]
-    pub color_theme: ColorTheme,
-}
-
-pub struct ParseGenerateArgs {
-    pub rgb: Srgb,
-    pub no_saturation_fg: bool,
     pub color_theme: ColorTheme,
 }
 
@@ -34,22 +28,8 @@ pub enum ColorTheme {
     Light,
 }
 
-impl TryFrom<GenerateArgs> for ParseGenerateArgs {
-    type Error = anyhow::Error;
-
-    fn try_from(v: GenerateArgs) -> Result<Self, Self::Error> {
-        let rgb = Srgb::from_str(&v.rgb)?.into();
-        Ok(Self {
-            rgb,
-            no_saturation_fg: v.no_saturation_fg,
-            color_theme: v.color_theme,
-        })
-    }
-}
-
 impl Cli {
     pub fn generate(args: &GenerateArgs) -> anyhow::Result<()> {
-        let args = ParseGenerateArgs::try_from(args.clone())?;
         let mut rng = rand::thread_rng();
 
         let path_prefix = Path::new(".vscode");
@@ -58,7 +38,7 @@ impl Cli {
         let full_palette_path = path_prefix.join("full_palette.json");
         let setting_path = path_prefix.join("settings.json");
 
-        let palette = BasePalette::new(&args.rgb, &args.color_theme, &mut rng);
+        let palette = BasePalette::new(&args.rgb.into(), &args.color_theme, &mut rng);
 
         let (actual_mode, color_map) = palette.take();
 

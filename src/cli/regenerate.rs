@@ -14,30 +14,13 @@ use crate::{
 
 pub struct RegenerateArgs {
     #[clap(short, long)]
-    pub fixs: Vec<String>,
+    pub fixs: Vec<Color>,
     #[arg(short, long)]
     pub no_saturation_fg: bool,
 }
 
-pub struct ParseRegenerateArgs {
-    pub fixs: Vec<Color>,
-    pub no_saturation_fg: bool,
-}
-
-impl TryFrom<RegenerateArgs> for ParseRegenerateArgs {
-    type Error = anyhow::Error;
-
-    fn try_from(v: RegenerateArgs) -> Result<Self, Self::Error> {
-        Ok(Self {
-            fixs: v.fixs.iter().filter_map(|v| v.parse().ok()).collect(),
-            no_saturation_fg: v.no_saturation_fg,
-        })
-    }
-}
-
 impl Cli {
     pub fn regenerate(args: &RegenerateArgs) -> anyhow::Result<()> {
-        let args = ParseRegenerateArgs::try_from(args.clone())?;
         let mut rng = rand::thread_rng();
 
         let path_prefix = Path::new(".vscode");
