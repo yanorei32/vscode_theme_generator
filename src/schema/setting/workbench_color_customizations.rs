@@ -3,7 +3,7 @@ use serde::Serialize;
 use crate::{
     model::{Color, HexStr},
     util::ReplaceAlphaExt,
-    palette::wrap::wrap_full_palette::WrapFullPalette,
+    schema::palette::FullPaletteFile,
 };
 
 #[derive(Serialize)]
@@ -363,7 +363,7 @@ pub struct WorkbenchColorCustomizations {
 }
 
 impl WorkbenchColorCustomizations {
-    pub fn new(palette: &WrapFullPalette, no_saturation_fg: bool) -> Self {
+    pub fn new(palette: &FullPaletteFile, no_saturation_fg: bool) -> Self {
         let fg = if no_saturation_fg {
             &palette.fg
         } else {

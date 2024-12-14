@@ -1,12 +1,12 @@
-use std::{fs::create_dir_all, option, path::Path};
+use std::{fs::create_dir_all, path::Path};
 
 use clap::Args;
 
 use crate::{
     model::Color,
     optimize::optimize_color_map,
-    palette::{base_palette::BasePalette, full_palette::FullPalette},
-    setting::Setting,
+    palette::{BasePalette, FullPalette},
+    schema::Setting,
     Cli,
 };
 

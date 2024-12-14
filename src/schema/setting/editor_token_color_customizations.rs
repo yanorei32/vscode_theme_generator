@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use super::text_mate_rule::TextMateRule;
-use crate::{model::Color, palette::wrap::wrap_full_palette::WrapFullPalette};
+use crate::{model::Color, schema::palette::FullPaletteFile};
 
 #[derive(Serialize)]
 pub struct EditorTokenColorCustomizations {
@@ -10,7 +10,7 @@ pub struct EditorTokenColorCustomizations {
 }
 
 impl EditorTokenColorCustomizations {
-    pub fn new(palette: &WrapFullPalette, _no_saturation_fg: bool) -> Self {
+    pub fn new(palette: &FullPaletteFile, _no_saturation_fg: bool) -> Self {
         Self {
             text_mate_rules: vec![
                 TextMateRule::new(

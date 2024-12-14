@@ -1,8 +1,4 @@
-use std::{
-    fs::File,
-    io::{Read, Write},
-    path::Path,
-};
+use std::{fs::File, io::Write, path::Path};
 
 use linearize::{static_map, StaticMap};
 use palette::Srgb;
@@ -11,10 +7,9 @@ use rand::rngs::ThreadRng;
 use crate::{
     cli::generate::ColorTheme,
     model::{ActualThemeMode, Color, ColorMap},
+    schema::BasePaletteFile,
     util::{ColorMapExt, SrgbExt},
 };
-
-use super::wrap::wrap_base_palette::WrapBasePalette;
 
 #[derive(Debug, Clone)]
 pub struct BasePalette {
@@ -44,19 +39,16 @@ impl BasePalette {
     }
 
     pub fn export(&self, path: &Path) -> anyhow::Result<()> {
-        let wrap_palette = WrapBasePalette::from(self.clone());
-        let palette_str = serde_json::to_string(&wrap_palette)?;
-        let mut palette_file = File::create(path)?;
-        writeln!(palette_file, "{}", palette_str)?;
+        let palette = BasePaletteFile::from(self.clone());
+        let palette = serde_json::to_string(&palette)?;
+        File::create(path)?.write_all(palette.as_bytes())?;
         Ok(())
     }
 
     pub fn load(path: &Path) -> anyhow::Result<Self> {
-        let mut palette_file = File::open(path).expect("file not found");
-        let mut palette_str = String::new();
-        palette_file.read_to_string(&mut palette_str)?;
-        let wrap_palette = serde_json::from_str::<WrapBasePalette>(&palette_str)?;
-        Ok(wrap_palette.into())
+        let palette = std::fs::read_to_string(path)?;
+        let palette: BasePaletteFile = serde_json::from_str(&palette)?;
+        Ok(palette.into())
     }
 
     pub fn renew_colors(&self, targets: &[Color], rng: &mut ThreadRng) -> Self {
@@ -85,8 +77,8 @@ impl BasePalette {
     }
 }
 
-impl From<WrapBasePalette> for BasePalette {
-    fn from(v: WrapBasePalette) -> Self {
+impl From<BasePaletteFile> for BasePalette {
+    fn from(v: BasePaletteFile) -> Self {
         let actual_mode = if v.dark {
             ActualThemeMode::Dark
         } else {

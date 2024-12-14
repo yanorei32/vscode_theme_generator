@@ -7,8 +7,8 @@ use crate::{
     cli::Cli,
     model::Color,
     optimize::optimize_color_map,
-    palette::{base_palette::BasePalette, full_palette::FullPalette},
-    setting::Setting,
+    palette::{BasePalette, FullPalette},
+    schema::Setting,
 };
 
 #[derive(Debug, Clone, Args)]

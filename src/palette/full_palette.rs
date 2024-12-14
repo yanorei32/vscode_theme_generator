@@ -1,13 +1,12 @@
 use std::{fs::File, io::Write, path::Path};
 
-use ::palette::Srgb;
-use palette::{FromColor as _, Lch};
-
-use super::{base_palette::BasePalette, wrap::wrap_full_palette::WrapFullPalette};
 use linearize::StaticMap;
+use palette::{FromColor as _, Lch, Srgb};
 
 use crate::{
     model::{ActualThemeMode, Color},
+    palette::BasePalette,
+    schema::FullPaletteFile,
     util::ColorMapExt,
 };
 
@@ -55,10 +54,10 @@ impl From<BasePalette> for FullPalette {
 
 impl FullPalette {
     pub fn export(&self, path: &Path) -> anyhow::Result<()> {
-        let wrap_palette: WrapFullPalette = self.clone().into();
-        let palette_str = serde_json::to_string(&wrap_palette)?;
-        let mut palette_file = File::create(path)?;
-        writeln!(palette_file, "{}", palette_str)?;
+        let palette = FullPaletteFile::from(self.clone());
+        let palette = serde_json::to_string(&palette)?;
+
+        File::create(path)?.write_all(palette.as_bytes())?;
         Ok(())
     }
 }

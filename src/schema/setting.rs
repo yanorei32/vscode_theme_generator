@@ -4,7 +4,7 @@ use editor_token_color_customizations::EditorTokenColorCustomizations;
 use serde::Serialize;
 use workbench_color_customizations::WorkbenchColorCustomizations;
 
-use crate::palette::{full_palette::FullPalette, wrap::wrap_full_palette::WrapFullPalette};
+use crate::{palette::FullPalette, schema::FullPaletteFile};
 
 pub mod editor_token_color_customizations;
 pub mod text_mate_rule;
@@ -20,7 +20,7 @@ pub struct Setting {
 
 impl Setting {
     pub fn new(palette: &FullPalette, no_saturation_fg: bool) -> Self {
-        let palette = WrapFullPalette::from(palette.clone());
+        let palette = FullPaletteFile::from(palette.clone());
         Self {
             workbench_color_customizations: WorkbenchColorCustomizations::new(
                 &palette,

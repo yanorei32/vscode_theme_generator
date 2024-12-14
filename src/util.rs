@@ -80,7 +80,6 @@ impl ReplaceAlphaExt for HexStr {
 pub trait ColorMapExt {
     fn base_color(&self) -> Srgb;
     fn fg_color_luminouse_chroma(&self) -> (f32, f32);
-    fn calc_score(&self) -> f32;
 }
 
 impl ColorMapExt for StaticMap<Color, Srgb> {
@@ -102,35 +101,5 @@ impl ColorMapExt for StaticMap<Color, Srgb> {
                 let lch = Lch::from_color(*value);
                 (l + lch.l / n, chroma + lch.chroma / n)
             })
-    }
-
-    fn calc_score(&self) -> f32 {
-        // TODO: これが期待通りに動いているか確認する
-        use itertools::Itertools;
-
-        let base_score: f32 = enum_iterator::all::<Color>()
-            .tuple_combinations()
-            .map(|(a, b)| {
-                let diff = self[a].compare(&self[b]);
-                let p = if a.is_bg_color() { 42.0 } else { 21.0 };
-
-                (diff / p).log10().min(0.0) * 1000000.0
-            })
-            .sum();
-
-        let (l_ave, chroma_ave) = self.fg_color_luminouse_chroma();
-
-        let (l_point, chroma_point) =
-            self.iter()
-                .filter(|(k, _)| !k.is_bg_color())
-                .fold((0.0, 0.0), |sum, (_, value)| {
-                    let lch = Lch::from_color(*value);
-                    (
-                        sum.0 + ((lch.l - l_ave).abs() - 5.0).max(0.0).powf(2.0),
-                        sum.1 + ((lch.chroma - chroma_ave).abs() - 5.0).max(0.0).powf(2.0),
-                    )
-                });
-
-        base_score - l_point * 10000000.0 + chroma_point * 10000000.0
     }
 }
