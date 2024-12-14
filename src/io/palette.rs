@@ -15,7 +15,7 @@ use crate::{
 impl LoadExt for BasePalette {
     fn load(path: &Path) -> anyhow::Result<Self> {
         let palette = std::fs::read_to_string(path)?;
-        let palette: BasePaletteFile = serde_json::from_str(&palette)?;
+        let palette: BasePaletteExportable = serde_json::from_str(&palette)?;
 
         let actual_mode = if palette.dark {
             ActualThemeMode::Dark
@@ -31,7 +31,7 @@ impl LoadExt for BasePalette {
 
 impl ExportExt for BasePalette {
     fn export(&self, path: &Path) -> anyhow::Result<()> {
-        let palette = BasePaletteFile::from(self.clone());
+        let palette = BasePaletteExportable::from(self.clone());
         let palette = serde_json::to_string(&palette)?;
         File::create(path)?.write_all(palette.as_bytes())?;
         Ok(())
@@ -40,7 +40,7 @@ impl ExportExt for BasePalette {
 
 impl ExportExt for FullPalette {
     fn export(&self, path: &Path) -> anyhow::Result<()> {
-        let palette = FullPaletteFile::from(self.clone());
+        let palette = FullPaletteExportable::from(self.clone());
         let palette = serde_json::to_string(&palette)?;
         File::create(path)?.write_all(palette.as_bytes())?;
         Ok(())
@@ -48,7 +48,7 @@ impl ExportExt for FullPalette {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct BasePaletteFile {
+struct BasePaletteExportable {
     #[serde(rename = "$schema")]
     pub schema: String,
     pub dark: bool,
@@ -57,7 +57,7 @@ pub struct BasePaletteFile {
     pub color_map: StaticMap<Color, HexStr>,
 }
 
-impl From<BasePalette> for BasePaletteFile {
+impl From<BasePalette> for BasePaletteExportable {
     fn from(v: BasePalette) -> Self {
         Self {
             schema: "https://raw.githubusercontent.com/ecto0310/vscode_theme_generator/refs/heads/main/schema/palette.json".to_string(),
@@ -68,18 +68,18 @@ impl From<BasePalette> for BasePaletteFile {
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct FullPaletteFile {
+pub(in crate::io) struct FullPaletteExportable {
     #[serde(rename = "$schema")]
-    pub schema: String,
-    pub dark: bool,
+    schema: String,
+    dark: bool,
 
+    // TODO: 構造が変
     #[serde(flatten)]
-    pub color_map: StaticMap<Color, Vec<HexStr>>,
-
-    pub fg: Vec<HexStr>,
+    pub(in crate::io) color_map: StaticMap<Color, Vec<HexStr>>,
+    pub(in crate::io) fg: Vec<HexStr>,
 }
 
-impl From<FullPalette> for FullPaletteFile {
+impl From<FullPalette> for FullPaletteExportable {
     fn from(v: FullPalette) -> Self {
         Self {
             schema: "https://raw.githubusercontent.com/ecto0310/vscode_theme_generator/refs/heads/main/schema/full_palette.json".to_string(),

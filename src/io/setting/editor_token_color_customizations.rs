@@ -1,16 +1,16 @@
 use serde::Serialize;
 
 use super::text_mate_rule::TextMateRule;
-use crate::{model::Color, io::palette::FullPaletteFile};
+use crate::{model::Color, io::palette::FullPaletteExportable};
 
 #[derive(Serialize)]
-pub struct EditorTokenColorCustomizations {
+pub(super) struct EditorTokenColorCustomizations {
     #[serde(rename = "textMateRules")]
-    pub text_mate_rules: Vec<TextMateRule>,
+    text_mate_rules: Vec<TextMateRule>,
 }
 
 impl EditorTokenColorCustomizations {
-    pub fn new(palette: &FullPaletteFile, _no_saturation_fg: bool) -> Self {
+    pub(super) fn new(palette: &FullPaletteExportable, _no_saturation_fg: bool) -> Self {
         Self {
             text_mate_rules: vec![
                 TextMateRule::new(

@@ -42,9 +42,8 @@ impl Cli {
 
         let path_prefix = Path::new(".vscode");
         create_dir_all(path_prefix)?;
+
         let palette_path = path_prefix.join("palette.json");
-        let full_palette_path = path_prefix.join("full_palette.json");
-        let setting_path = path_prefix.join("settings.json");
 
         let (actual_mode, color_map) = BasePalette::load(&palette_path)?
             .renew_colors(&args.fixs, &mut rng)
@@ -63,10 +62,11 @@ impl Cli {
         palette.export(&palette_path)?;
 
         let full_palette = FullPalette::from(palette);
-        full_palette.export(&full_palette_path)?;
+        full_palette.export(&path_prefix.join("full_palette.json"))?;
 
         let setting = Setting::new(&full_palette, args.no_saturation_fg);
-        setting.export(&setting_path)?;
+        setting.export(&path_prefix.join("settings.json"))?;
+
         Ok(())
     }
 }
