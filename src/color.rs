@@ -1,8 +1,13 @@
 use enum_iterator::Sequence;
 use linearize::Linearize;
-use palette::Srgb;
-use serde::{Deserialize, Deserializer, Serialize};
+use palette::{Srgb, Srgba, WithAlpha};
+use serde::{
+    de::{self, Deserializer, Unexpected, Visitor},
+    ser::Serializer,
+    Deserialize, Serialize,
+};
 use std::str::FromStr;
+use std::fmt;
 
 #[derive(Debug, Clone, Copy, Linearize, Eq, PartialEq, Sequence, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -46,81 +51,75 @@ impl FromStr for Color {
     }
 }
 
+fn srgba_format_short_hex(c: Srgba<u8>) -> String {
+    if c.alpha != 0 {
+        format!("#{:x}", c)
+    } else {
+        format!("#{:x}", c.color)
+    }
+}
+
+fn srgba_from_hex_str(s: &str) -> Result<Srgba<u8>, ()> {
+    // try parse as Srgba
+    let srgba: Result<Srgba<u8>, _> = s[1..].parse();
+    if let Ok(srgba) = srgba {
+        return Ok(srgba);
+    }
+
+    // try parse as Srgb
+    let srgb: Result<Srgb<u8>, _> = s[1..].parse();
+    if let Ok(srgb) = srgb {
+        return Ok(srgb.with_alpha(0u8));
+    }
+
+    Err(())
+}
+
 #[derive(Debug, Clone, Copy)]
-pub struct SrgbA {
-    pub red: f32,
-    pub green: f32,
-    pub blue: f32,
-    pub alpha: f32,
+pub struct HexStr(pub Srgba<u8>);
+
+pub trait ReplaceAlphaExt {
+    fn alpha(&self, alpha: f32) -> Self;
 }
 
-impl SrgbA {
-    pub fn new(red: f32, green: f32, blue: f32, alpha: f32) -> Self {
-        Self {
-            red,
-            green,
-            blue,
-            alpha,
-        }
-    }
-
-    pub fn alpha(&self, alpha: f32) -> Self {
-        let mut color = *self;
-        color.alpha = alpha;
-        color
+impl ReplaceAlphaExt for HexStr {
+    fn alpha(&self, alpha: f32) -> Self {
+        let alpha = (u8::MAX as f32 * alpha) as u8;
+        HexStr(self.0.color.with_alpha(alpha))
     }
 }
 
-impl From<Srgb> for SrgbA {
-    fn from(v: Srgb) -> Self {
-        Self {
-            red: v.red,
-            green: v.green,
-            blue: v.blue,
-            alpha: 1.0,
-        }
-    }
-}
-
-impl From<SrgbA> for Srgb {
-    fn from(v: SrgbA) -> Self {
-        Srgb::new(v.red, v.green, v.blue)
-    }
-}
-
-impl Serialize for SrgbA {
+impl Serialize for HexStr {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: serde::Serializer,
+        S: Serializer,
     {
-        let red = (self.red.clamp(0.0, 1.0) * 255.0) as i32;
-        let green = (self.green.clamp(0.0, 1.0) * 255.0) as i32;
-        let blue = (self.blue.clamp(0.0, 1.0) * 255.0) as i32;
-        let alpha = (self.alpha.clamp(0.0, 1.0) * 255.0) as i32;
-        let str = if alpha == 255 {
-            format!("#{:>02x}{:>02x}{:>02x}", red, green, blue)
-        } else {
-            format!("#{:>02x}{:>02x}{:>02x}{:>02x}", red, green, blue, alpha)
-        };
-        serializer.serialize_str(&str)
+        serializer.serialize_str(&srgba_format_short_hex(self.0))
     }
 }
 
-impl<'de> Deserialize<'de> for SrgbA {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+impl<'de> Visitor<'de> for HexStr {
+    type Value = HexStr;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("str formatted RGBA (#11223344, #1234) or RGB(#112233, #123)")
+    }
+
+    fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        Ok(Self(srgba_from_hex_str(s).map_err(|_| {
+            de::Error::invalid_value(Unexpected::Str(s), &self)
+        })?))
+    }
+}
+
+impl<'de> Deserialize<'de> for HexStr {
+    fn deserialize<D>(deserializer: D) -> Result<HexStr, D::Error>
     where
         D: Deserializer<'de>,
     {
-        let str = String::deserialize(deserializer)?;
-        let red = u8::from_str_radix(&str[1..3], 16).unwrap_or(0) as f32 / 255.0;
-        let green = u8::from_str_radix(&str[3..5], 16).unwrap_or(0) as f32 / 255.0;
-        let blue = u8::from_str_radix(&str[5..7], 16).unwrap_or(0) as f32 / 255.0;
-        let alpha = if str.len() == 8 {
-            u8::from_str_radix(&str[7..9], 16).unwrap_or(0) as f32 / 255.0
-        } else {
-            0.0
-        };
-
-        Ok(SrgbA::new(red, green, blue, alpha))
+        deserializer.deserialize_any(HexStr(Srgba::new(0, 0, 0, 0)))
     }
 }

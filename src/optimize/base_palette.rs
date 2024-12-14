@@ -7,11 +7,16 @@ use crate::{color::Color, palette::base_palette::BasePalette};
 
 pub fn optimize_base_palette(
     palette: &BasePalette,
-    change_palette_element: &[Color],
-    time_limit: u64,
+    candidates: &[Color],
+    time_limit_ms: u64,
     rng: &mut ThreadRng,
 ) -> BasePalette {
-    let time_limit = Duration::from_millis(time_limit);
+    // if candidates is empty, do nothing
+    if candidates.is_empty() {
+        return palette.clone();
+    }
+
+    let time_limit = Duration::from_millis(time_limit_ms);
     let start_temp = 15000.0f32;
     let end_temp = 0.0;
 
@@ -22,7 +27,7 @@ pub fn optimize_base_palette(
     let mut cursor = palette.clone();
 
     while start.elapsed() < time_limit {
-        let next = random_edit_one_color_of(&cursor, change_palette_element, rng);
+        let next = random_edit_one_color_of(&cursor, candidates, rng);
 
         let temp = start_temp
             + (end_temp - start_temp)

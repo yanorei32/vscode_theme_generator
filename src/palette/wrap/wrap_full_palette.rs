@@ -1,11 +1,12 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    color::{Color, SrgbA},
+    color::{Color, HexStr},
     model::ActualThemeMode,
     palette::full_palette::FullPalette,
 };
 use linearize::StaticMap;
+use palette::Srgba;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct WrapFullPalette {
@@ -14,8 +15,9 @@ pub struct WrapFullPalette {
     pub dark: bool,
 
     #[serde(flatten)]
-    pub color_table: StaticMap<Color, Vec<SrgbA>>,
-    pub fg: Vec<SrgbA>,
+    pub color_table: StaticMap<Color, Vec<HexStr>>,
+
+    pub fg: Vec<HexStr>,
 }
 
 impl From<FullPalette> for WrapFullPalette {
@@ -23,8 +25,8 @@ impl From<FullPalette> for WrapFullPalette {
         Self {
             schema: "https://raw.githubusercontent.com/ecto0310/vscode_theme_generator/refs/heads/main/schema/full_palette.json".to_string(),
             dark: v.actual_mode == ActualThemeMode::Dark,
-            fg: v.fg.iter().map(|c| SrgbA::from(*c)).collect(),
-            color_table: v.base_color_table.map_values(|v| v.iter().map(|v| SrgbA::from(*v)).collect()),
+            fg: v.fg.iter().map(|c| HexStr(Srgba::from(*c).into())).collect(),
+            color_table: v.base_color_table.map_values(|v| v.iter().map(|v| HexStr(Srgba::from(*v).into())).collect()),
         }
     }
 }

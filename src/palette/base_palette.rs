@@ -28,7 +28,7 @@ impl From<WrapBasePalette> for BasePalette {
             } else {
                 ActualThemeMode::Light
             },
-            color_table: v.color_table.map_values(|v| v.into()),
+            color_table: v.color_table.map_values(|v| v.0.color.into()),
             score: 0.0,
         };
         palette.calc_full_score();
