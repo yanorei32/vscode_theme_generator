@@ -1,8 +1,8 @@
 use std::{fs::create_dir_all, path::Path, str::FromStr};
 
 use clap::{Args, ValueEnum};
-use palette::Srgb;
 use enum_iterator::all;
+use palette::Srgb;
 
 use crate::{
     cli::Cli,
@@ -59,15 +59,16 @@ impl Cli {
         let full_palette_path = path_prefix.join("full_palette.json");
         let setting_path = path_prefix.join("settings.json");
 
-        let mut palette = BasePalette::new(&args.rgb, &args.color_theme, &mut rng);
-        optimize_base_palette(
-            &mut palette,
+        let palette = BasePalette::new(&args.rgb, &args.color_theme, &mut rng);
+
+        let palette = optimize_base_palette(
+            &palette,
             &all::<Color>()
                 .filter(|v| v.is_colorized())
                 .collect::<Vec<_>>(),
             100,
             &mut rng,
-        )?;
+        );
 
         palette.export(&palette_path)?;
 
