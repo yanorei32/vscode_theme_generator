@@ -1,12 +1,9 @@
-use std::{fs::File, io::Write, path::Path};
-
 use linearize::StaticMap;
 use palette::{FromColor as _, Lch, Srgb};
 
 use crate::{
     model::{ActualThemeMode, Color},
     palette::BasePalette,
-    io::FullPaletteFile,
     util::ColorMapExt,
 };
 
@@ -49,15 +46,5 @@ impl From<BasePalette> for FullPalette {
             fg: generate(fg, true),
             color_map: color_map.map(|k, c| generate(c, k == Color::Bg)),
         }
-    }
-}
-
-impl FullPalette {
-    pub fn export(&self, path: &Path) -> anyhow::Result<()> {
-        let palette = FullPaletteFile::from(self.clone());
-        let palette = serde_json::to_string(&palette)?;
-
-        File::create(path)?.write_all(palette.as_bytes())?;
-        Ok(())
     }
 }

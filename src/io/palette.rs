@@ -38,6 +38,15 @@ impl ExportExt for BasePalette {
     }
 }
 
+impl ExportExt for FullPalette {
+    fn export(&self, path: &Path) -> anyhow::Result<()> {
+        let palette = FullPaletteFile::from(self.clone());
+        let palette = serde_json::to_string(&palette)?;
+        File::create(path)?.write_all(palette.as_bytes())?;
+        Ok(())
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct BasePaletteFile {
     #[serde(rename = "$schema")]
