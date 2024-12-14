@@ -9,9 +9,7 @@ use linearize::{static_map, StaticMap};
 use palette::{FromColor, Lch, Srgb};
 use rand::rngs::ThreadRng;
 
-use crate::{
-    cli::generate::ColorTheme, color::Color, model::ActualThemeMode, util::SrgbExt,
-};
+use crate::{cli::generate::ColorTheme, color::Color, model::ActualThemeMode, util::SrgbExt};
 
 use super::wrap::wrap_base_palette::WrapBasePalette;
 
@@ -42,16 +40,14 @@ impl BasePalette {
     pub fn new(base_rgb: &Srgb, color_theme: &ColorTheme, rng: &mut ThreadRng) -> Self {
         let (actual_mode, bg, fg) = base_rgb.theme_color_for(color_theme);
 
-        let color_table = static_map! {
-            Color::Bg => bg,
-            Color::Gray => fg,
-            // TODO: これで動いてるか確認する
-            _ => fg.new_by_random_hue(rng),
-        };
-
+        // TODO: これで動いてるか確認する
         let mut palette = Self {
             actual_mode,
-            color_table,
+            color_table: static_map! {
+                Color::Bg => bg,
+                Color::Gray => fg,
+                _ => fg.new_by_random_hue(rng),
+            },
             score: 0.0,
         };
 
@@ -88,10 +84,10 @@ impl BasePalette {
 
         for color in change_palette_element {
             if color.is_bg_color() {
-                self.update_color(*color, bg);
+                self.update(*color, bg);
             } else {
                 let select_rgb = base_rgb.new_by_random_hue(rng);
-                self.update_color(*color, select_rgb);
+                self.update(*color, select_rgb);
             }
         }
     }
@@ -127,11 +123,11 @@ impl BasePalette {
         self.score -= l_point * 10000000.0 + chroma_point * 10000000.0;
     }
 
-    pub fn get_color(&self, c: Color) -> Srgb {
+    pub fn get(&self, c: Color) -> Srgb {
         self.color_table[c]
     }
 
-    pub fn update_color(&mut self, c: Color, color: Srgb) {
+    pub fn update(&mut self, c: Color, color: Srgb) {
         self.color_table[c] = color;
         self.calc_full_score();
     }

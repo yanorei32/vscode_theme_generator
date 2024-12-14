@@ -24,6 +24,7 @@ impl From<BasePalette> for FullPalette {
             let lch = Lch::from_color(rgb);
             let width_cut = if double_width { 1.0 } else { 2.0 };
             let width = lch.l.min(100.0 - lch.l) / width_cut;
+
             let mut ls = [
                 lch.l + width,
                 lch.l + width / 2.0,
@@ -31,15 +32,17 @@ impl From<BasePalette> for FullPalette {
                 lch.l - width / 2.0,
                 lch.l - width,
             ];
+
             if v.actual_mode == ActualThemeMode::Dark {
                 ls.reverse();
             }
+
             ls.into_iter()
                 .map(|l| Srgb::from_color(Lch::new(l, lch.chroma, lch.hue)))
                 .collect()
         };
-        let (l, _) = v.fg_average();
-        let fg = Srgb::from_color(Lch::new(l, 0.0, 0.0));
+
+        let fg = Srgb::from_color(Lch::new(v.fg_average().0, 0.0, 0.0));
 
         Self {
             actual_mode: v.actual_mode,

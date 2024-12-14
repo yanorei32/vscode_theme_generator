@@ -12,7 +12,6 @@ use linearize::StaticMap;
 pub struct WrapBasePalette {
     #[serde(rename = "$schema")]
     pub schema: String,
-
     pub dark: bool,
 
     #[serde(flatten)]

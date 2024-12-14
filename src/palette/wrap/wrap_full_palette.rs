@@ -12,8 +12,10 @@ pub struct WrapFullPalette {
     #[serde(rename = "$schema")]
     pub schema: String,
     pub dark: bool,
-    pub fg: Vec<SrgbA>,
+
+    #[serde(flatten)]
     pub color_table: StaticMap<Color, Vec<SrgbA>>,
+    pub fg: Vec<SrgbA>,
 }
 
 impl From<FullPalette> for WrapFullPalette {
