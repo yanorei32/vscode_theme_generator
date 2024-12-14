@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use super::text_mate_rule::TextMateRule;
-use crate::{model::Color, io::palette::FullPaletteExportable};
+use crate::{io::palette::FullPaletteExportable, model::Color};
 
 #[derive(Serialize)]
 pub(super) struct EditorTokenColorCustomizations {
@@ -14,7 +14,7 @@ impl EditorTokenColorCustomizations {
         Self {
             text_mate_rules: vec![
                 TextMateRule::new(
-                    vec![
+                    &[
                         "comment",
                         "punctuation.definition.comment",
                         "string.comment",
@@ -23,7 +23,7 @@ impl EditorTokenColorCustomizations {
                     Some(palette.color_map[Color::Gray][0]),
                 ),
                 TextMateRule::new(
-                    vec![
+                    &[
                         "constant",
                         "entity.name.constant",
                         "variable.other.constant",
@@ -34,32 +34,28 @@ impl EditorTokenColorCustomizations {
                     Some(palette.color_map[Color::Blue][3]),
                 ),
                 TextMateRule::new(
-                    vec!["entity", "entity.name"],
+                    &["entity", "entity.name"],
                     None,
                     Some(palette.color_map[Color::Purple][3]),
                 ),
                 TextMateRule::new(
-                    vec!["variable.parameter.function"],
+                    &["variable.parameter.function"],
                     None,
                     Some(palette.color_map[Color::Gray][2]),
                 ),
                 TextMateRule::new(
-                    vec!["entity.name.tag"],
+                    &["entity.name.tag"],
                     None,
                     Some(palette.color_map[Color::Green][3]),
                 ),
+                TextMateRule::new(&["keyword"], None, Some(palette.color_map[Color::Red][3])),
                 TextMateRule::new(
-                    vec!["keyword"],
+                    &["storage", "storage.type"],
                     None,
                     Some(palette.color_map[Color::Red][3]),
                 ),
                 TextMateRule::new(
-                    vec!["storage", "storage.type"],
-                    None,
-                    Some(palette.color_map[Color::Red][3]),
-                ),
-                TextMateRule::new(
-                    vec![
+                    &[
                         "storage.modifier.package",
                         "storage.modifier.import",
                         "storage.type.java",
@@ -68,7 +64,7 @@ impl EditorTokenColorCustomizations {
                     Some(palette.color_map[Color::Gray][2]),
                 ),
                 TextMateRule::new(
-                    vec![
+                    &[
                         "string",
                         "punctuation.definition.string",
                         "string punctuation.section.embedded source",
@@ -76,68 +72,64 @@ impl EditorTokenColorCustomizations {
                     None,
                     Some(palette.color_map[Color::Blue][4]),
                 ),
+                TextMateRule::new(&["support"], None, Some(palette.color_map[Color::Blue][3])),
                 TextMateRule::new(
-                    vec!["support"],
+                    &["meta.property-name"],
                     None,
                     Some(palette.color_map[Color::Blue][3]),
                 ),
                 TextMateRule::new(
-                    vec!["meta.property-name"],
-                    None,
-                    Some(palette.color_map[Color::Blue][3]),
-                ),
-                TextMateRule::new(
-                    vec!["variable"],
+                    &["variable"],
                     None,
                     Some(palette.color_map[Color::Orange][3]),
                 ),
                 TextMateRule::new(
-                    vec!["variable.other"],
+                    &["variable.other"],
                     None,
                     Some(palette.color_map[Color::Gray][2]),
                 ),
                 TextMateRule::new(
-                    vec!["invalid.broken"],
+                    &["invalid.broken"],
                     None,
                     Some(palette.color_map[Color::Red][3]),
                 ),
                 TextMateRule::new(
-                    vec!["invalid.deprecated"],
+                    &["invalid.deprecated"],
                     None,
                     Some(palette.color_map[Color::Red][3]),
                 ),
                 TextMateRule::new(
-                    vec!["invalid.illegal"],
+                    &["invalid.illegal"],
                     None,
                     Some(palette.color_map[Color::Red][3]),
                 ),
                 TextMateRule::new(
-                    vec!["invalid.unimplemented"],
+                    &["invalid.unimplemented"],
                     None,
                     Some(palette.color_map[Color::Red][3]),
                 ),
                 TextMateRule::new(
-                    vec!["carriage-return"],
+                    &["carriage-return"],
                     Some("italic underline"),
                     Some(palette.color_map[Color::Gray][0]),
                 ),
                 TextMateRule::new(
-                    vec!["message.error"],
+                    &["message.error"],
                     None,
                     Some(palette.color_map[Color::Red][3]),
                 ),
                 TextMateRule::new(
-                    vec!["string variable"],
+                    &["string variable"],
                     None,
                     Some(palette.color_map[Color::Blue][3]),
                 ),
                 TextMateRule::new(
-                    vec!["source.regexp", "string.regexp"],
+                    &["source.regexp", "string.regexp"],
                     None,
                     Some(palette.color_map[Color::Blue][4]),
                 ),
                 TextMateRule::new(
-                    vec![
+                    &[
                         "string.regexp.character-class",
                         "string.regexp constant.character.escape",
                         "string.regexp source.ruby.embedded",
@@ -147,54 +139,54 @@ impl EditorTokenColorCustomizations {
                     Some(palette.color_map[Color::Blue][4]),
                 ),
                 TextMateRule::new(
-                    vec!["string.regexp constant.character.escape"],
+                    &["string.regexp constant.character.escape"],
                     None,
                     Some(palette.color_map[Color::Green][3]),
                 ),
                 TextMateRule::new(
-                    vec!["support.constant"],
+                    &["support.constant"],
                     None,
                     Some(palette.color_map[Color::Blue][3]),
                 ),
                 TextMateRule::new(
-                    vec!["support.variable"],
+                    &["support.variable"],
                     None,
                     Some(palette.color_map[Color::Blue][3]),
                 ),
                 TextMateRule::new(
-                    vec!["punctuation.definition.list.begin.markdown"],
+                    &["punctuation.definition.list.begin.markdown"],
                     None,
                     Some(palette.color_map[Color::Orange][3]),
                 ),
                 TextMateRule::new(
-                    vec!["markup.heading", "markup.heading entity.name"],
+                    &["markup.heading", "markup.heading entity.name"],
                     Some("bold"),
                     Some(palette.color_map[Color::Blue][3]),
                 ),
                 TextMateRule::new(
-                    vec!["markup.quote"],
+                    &["markup.quote"],
                     None,
                     Some(palette.color_map[Color::Green][3]),
                 ),
                 TextMateRule::new(
-                    vec!["markup.italic"],
+                    &["markup.italic"],
                     Some("italic"),
                     Some(palette.color_map[Color::Gray][2]),
                 ),
                 TextMateRule::new(
-                    vec!["markup.bold"],
+                    &["markup.bold"],
                     Some("bold"),
                     Some(palette.color_map[Color::Gray][2]),
                 ),
-                TextMateRule::new(vec!["markup.underline"], Some("underline"), None),
-                TextMateRule::new(vec!["markup.strikethrough"], Some("strikethrough"), None),
+                TextMateRule::new(&["markup.underline"], Some("underline"), None),
+                TextMateRule::new(&["markup.strikethrough"], Some("strikethrough"), None),
                 TextMateRule::new(
-                    vec!["markup.inline.raw"],
+                    &["markup.inline.raw"],
                     None,
                     Some(palette.color_map[Color::Blue][3]),
                 ),
                 TextMateRule::new(
-                    vec![
+                    &[
                         "markup.deleted",
                         "meta.diff.header.from-file",
                         "punctuation.definition.deleted",
@@ -203,7 +195,7 @@ impl EditorTokenColorCustomizations {
                     Some(palette.color_map[Color::Red][3]),
                 ),
                 TextMateRule::new(
-                    vec![
+                    &[
                         "markup.inserted",
                         "meta.diff.header.to-file",
                         "punctuation.definition.inserted",
@@ -212,37 +204,37 @@ impl EditorTokenColorCustomizations {
                     Some(palette.color_map[Color::Green][3]),
                 ),
                 TextMateRule::new(
-                    vec!["markup.changed", "punctuation.definition.changed"],
+                    &["markup.changed", "punctuation.definition.changed"],
                     None,
                     Some(palette.color_map[Color::Orange][3]),
                 ),
                 TextMateRule::new(
-                    vec!["markup.ignored", "markup.untracked"],
+                    &["markup.ignored", "markup.untracked"],
                     None,
                     Some(palette.color_map[Color::Gray][0]),
                 ),
                 TextMateRule::new(
-                    vec!["meta.diff.range"],
+                    &["meta.diff.range"],
                     Some("bold"),
                     Some(palette.color_map[Color::Purple][3]),
                 ),
                 TextMateRule::new(
-                    vec!["meta.diff.header"],
+                    &["meta.diff.header"],
                     None,
                     Some(palette.color_map[Color::Blue][3]),
                 ),
                 TextMateRule::new(
-                    vec!["meta.separator"],
+                    &["meta.separator"],
                     Some("bold"),
                     Some(palette.color_map[Color::Blue][3]),
                 ),
                 TextMateRule::new(
-                    vec!["meta.output"],
+                    &["meta.output"],
                     None,
                     Some(palette.color_map[Color::Blue][3]),
                 ),
                 TextMateRule::new(
-                    vec![
+                    &[
                         "brackethighlighter.tag",
                         "brackethighlighter.curly",
                         "brackethighlighter.round",
@@ -254,12 +246,12 @@ impl EditorTokenColorCustomizations {
                     Some(palette.color_map[Color::Gray][3]),
                 ),
                 TextMateRule::new(
-                    vec!["brackethighlighter.unmatched"],
+                    &["brackethighlighter.unmatched"],
                     None,
                     Some(palette.color_map[Color::Red][3]),
                 ),
                 TextMateRule::new(
-                    vec!["constant.other.reference.link", "string.other.link"],
+                    &["constant.other.reference.link", "string.other.link"],
                     Some("underline"),
                     Some(palette.color_map[Color::Blue][4]),
                 ),
