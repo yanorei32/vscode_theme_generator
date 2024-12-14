@@ -3,10 +3,10 @@ use std::{fs::create_dir_all, path::Path};
 use clap::Args;
 
 use crate::{
+    io::{ExportExt, LoadExt, Setting},
     model::Color,
     optimize::optimize_color_map,
     palette::{BasePalette, FullPalette},
-    schema::Setting,
     Cli,
 };
 

@@ -1,10 +1,9 @@
-use linearize::StaticMap;
 use palette::{color_difference::Ciede2000, FromColor, Lch, Srgb, WithAlpha};
 use rand::{rngs::ThreadRng, Rng};
 
 use crate::{
     cli::generate::ColorTheme as CT,
-    model::{ActualThemeMode as AT, Color, HexStr},
+    model::{ActualThemeMode as AT, Color, ColorMap, HexStr},
 };
 
 const BLACK: Srgb = Srgb::new(0.0, 0.0, 0.0);
@@ -82,7 +81,7 @@ pub trait ColorMapExt {
     fn fg_color_luminouse_chroma(&self) -> (f32, f32);
 }
 
-impl ColorMapExt for StaticMap<Color, Srgb> {
+impl ColorMapExt for ColorMap {
     fn base_color(&self) -> Srgb {
         let (l, chroma) = self.fg_color_luminouse_chroma();
         let bg = Lch::from_color(self[Color::Bg]);

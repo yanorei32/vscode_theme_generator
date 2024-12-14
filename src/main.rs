@@ -4,7 +4,7 @@ use cli::Cli;
 mod cli;
 mod optimize;
 mod palette;
-mod schema;
+mod io;
 mod model;
 mod util;
 

@@ -5,10 +5,10 @@ use palette::Srgb;
 
 use crate::{
     cli::Cli,
+    io::{Setting, ExportExt},
     model::Color,
     optimize::optimize_color_map,
     palette::{BasePalette, FullPalette},
-    schema::Setting,
 };
 
 #[derive(Debug, Clone, Args)]

@@ -4,7 +4,7 @@ use editor_token_color_customizations::EditorTokenColorCustomizations;
 use serde::Serialize;
 use workbench_color_customizations::WorkbenchColorCustomizations;
 
-use crate::{palette::FullPalette, schema::FullPaletteFile};
+use crate::{palette::FullPalette, io::FullPaletteFile};
 
 pub mod editor_token_color_customizations;
 pub mod text_mate_rule;

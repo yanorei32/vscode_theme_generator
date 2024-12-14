@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use super::text_mate_rule::TextMateRule;
-use crate::{model::Color, schema::palette::FullPaletteFile};
+use crate::{model::Color, io::palette::FullPaletteFile};
 
 #[derive(Serialize)]
 pub struct EditorTokenColorCustomizations {

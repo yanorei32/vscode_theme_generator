@@ -3,7 +3,7 @@ use serde::Serialize;
 use crate::{
     model::{Color, HexStr},
     util::ReplaceAlphaExt,
-    schema::palette::FullPaletteFile,
+    io::palette::FullPaletteFile,
 };
 
 #[derive(Serialize)]

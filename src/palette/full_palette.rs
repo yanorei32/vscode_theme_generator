@@ -6,7 +6,7 @@ use palette::{FromColor as _, Lch, Srgb};
 use crate::{
     model::{ActualThemeMode, Color},
     palette::BasePalette,
-    schema::FullPaletteFile,
+    io::FullPaletteFile,
     util::ColorMapExt,
 };
 

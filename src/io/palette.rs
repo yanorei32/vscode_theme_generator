@@ -1,12 +1,42 @@
-use serde::{Deserialize, Serialize};
+use std::fs::File;
+use std::io::Write;
+use std::path::Path;
 
 use linearize::StaticMap;
 use palette::Srgba;
+use serde::{Deserialize, Serialize};
 
 use crate::{
-    model::{Color, HexStr, ActualThemeMode},
+    io::{ExportExt, LoadExt},
+    model::{ActualThemeMode, Color, HexStr},
     palette::{BasePalette, FullPalette},
 };
+
+impl LoadExt for BasePalette {
+    fn load(path: &Path) -> anyhow::Result<Self> {
+        let palette = std::fs::read_to_string(path)?;
+        let palette: BasePaletteFile = serde_json::from_str(&palette)?;
+
+        let actual_mode = if palette.dark {
+            ActualThemeMode::Dark
+        } else {
+            ActualThemeMode::Light
+        };
+
+        let color_map = palette.color_map.map_values(|v| v.0.color.into());
+
+        Ok(Self::from_parts(actual_mode, color_map))
+    }
+}
+
+impl ExportExt for BasePalette {
+    fn export(&self, path: &Path) -> anyhow::Result<()> {
+        let palette = BasePaletteFile::from(self.clone());
+        let palette = serde_json::to_string(&palette)?;
+        File::create(path)?.write_all(palette.as_bytes())?;
+        Ok(())
+    }
+}
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct BasePaletteFile {
