@@ -260,10 +260,6 @@ pub struct WorkbenchColorCustomizations {
     pub editor_gutter_added_background: HexStr,
     #[serde(rename = "editorGutter.deletedBackground")]
     pub editor_gutter_deleted_background: HexStr,
-    // #[serde(rename = "diffEditor.insertedTextBackground")]
-    // pub diff_editor_inserted_text_background: WrapSrgb,
-    // #[serde(rename = "diffEditor.removedTextBackground")]
-    // pub diff_editor_removed_text_background: WrapSrgb,
     #[serde(rename = "scrollbar.shadow")]
     pub scrollbar_shadow: HexStr,
     #[serde(rename = "scrollbarSlider.background")]
@@ -520,9 +516,6 @@ impl WorkbenchColorCustomizations {
             editor_gutter_added_background: palette.color_map[Color::Green][1],
             editor_gutter_deleted_background: palette.color_map[Color::Red][2],
 
-            // diff_editor_inserted_text_background: generate_color(palette.base_color_table[Color::Bg][0].into(), 270.0)
-            //     .into(),
-            // diff_editor_removed_text_background: generate_color(palette.base_color_table[Color::Bg][0].into(), 90.0).into(),
             scrollbar_shadow: palette.color_map[Color::Bg][4],
             scrollbar_slider_background: palette.color_map[Color::Bg][2],
             scrollbar_slider_hover_background: palette.color_map[Color::Bg][1],
