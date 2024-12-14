@@ -6,7 +6,7 @@ use palette::Srgb;
 
 use crate::{
     cli::Cli,
-    color::Color,
+    model::Color,
     optimize::base_palette::optimize_base_palette,
     palette::{base_palette::BasePalette, full_palette::FullPalette},
     setting::Setting,

@@ -4,23 +4,26 @@ use ::palette::Srgb;
 use palette::{FromColor as _, Lch};
 
 use super::{base_palette::BasePalette, wrap::wrap_full_palette::WrapFullPalette};
-use crate::color::Color;
-
-use crate::model::ActualThemeMode;
-
 use linearize::StaticMap;
+
+use crate::{
+    model::{ActualThemeMode, Color},
+    util::ColorMapExt,
+};
 
 #[derive(Debug, Clone)]
 pub struct FullPalette {
     pub actual_mode: ActualThemeMode,
 
-    pub fg: Vec<Srgb>,
-    pub base_color_table: StaticMap<Color, Vec<Srgb>>,
+    pub fg: [Srgb; 5],
+    pub color_map: StaticMap<Color, [Srgb; 5]>,
 }
 
 impl From<BasePalette> for FullPalette {
     fn from(v: BasePalette) -> Self {
-        let generate = |rgb: Srgb, double_width: bool| -> Vec<Srgb> {
+        let (actual_mode, color_map, _score) = v.take();
+
+        let generate = |rgb: Srgb, double_width: bool| -> [Srgb; 5] {
             let lch = Lch::from_color(rgb);
             let width_cut = if double_width { 1.0 } else { 2.0 };
             let width = lch.l.min(100.0 - lch.l) / width_cut;
@@ -33,21 +36,19 @@ impl From<BasePalette> for FullPalette {
                 lch.l - width,
             ];
 
-            if v.actual_mode == ActualThemeMode::Dark {
+            if actual_mode == ActualThemeMode::Dark {
                 ls.reverse();
             }
 
-            ls.into_iter()
-                .map(|l| Srgb::from_color(Lch::new(l, lch.chroma, lch.hue)))
-                .collect()
+            ls.map(|l| Srgb::from_color(Lch::new(l, lch.chroma, lch.hue)))
         };
 
-        let fg = Srgb::from_color(Lch::new(v.fg_average().0, 0.0, 0.0));
+        let fg = Srgb::from_color(Lch::new(color_map.fg_color_luminouse_chroma().0, 0.0, 0.0));
 
         Self {
-            actual_mode: v.actual_mode,
+            actual_mode,
             fg: generate(fg, true),
-            base_color_table: v.color_table.map(|k, c| generate(c, k == Color::Bg)),
+            color_map: color_map.map(|k, c| generate(c, k == Color::Bg)),
         }
     }
 }

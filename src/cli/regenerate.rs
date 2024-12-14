@@ -2,12 +2,12 @@ use std::{fs::create_dir_all, path::Path};
 
 use clap::Args;
 
-use super::Cli;
 use crate::{
-    color::Color,
+    model::Color,
     optimize::base_palette::optimize_base_palette,
     palette::{base_palette::BasePalette, full_palette::FullPalette},
     setting::Setting,
+    Cli,
 };
 
 #[derive(Debug, Clone, Args)]
@@ -46,11 +46,8 @@ impl Cli {
         let full_palette_path = path_prefix.join("full_palette.json");
         let setting_path = path_prefix.join("settings.json");
 
-        let mut palette = BasePalette::load(&palette_path)?;
-        if !args.fixs.is_empty() {
-            palette.renew(&args.fixs, &mut rng);
-            palette = optimize_base_palette(&palette, &args.fixs, 100, &mut rng);
-        }
+        let palette = BasePalette::load(&palette_path)?.renew_colors(&args.fixs, &mut rng);
+        let palette = optimize_base_palette(&palette, &args.fixs, 100, &mut rng);
         palette.export(&palette_path)?;
 
         let full_palette = FullPalette::from(palette);

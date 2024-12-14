@@ -1,11 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-
 use palette::Srgba;
 
 use crate::{
-    color::{Color, HexStr},
-    model::ActualThemeMode,
+    model::{Color, HexStr},
     palette::base_palette::BasePalette,
 };
 
@@ -18,15 +16,15 @@ pub struct WrapBasePalette {
     pub dark: bool,
 
     #[serde(flatten)]
-    pub color_table: StaticMap<Color, HexStr>,
+    pub color_map: StaticMap<Color, HexStr>,
 }
 
 impl From<BasePalette> for WrapBasePalette {
     fn from(v: BasePalette) -> Self {
         Self {
             schema: "https://raw.githubusercontent.com/ecto0310/vscode_theme_generator/refs/heads/main/schema/palette.json".to_string(),
-            dark: v.actual_mode == ActualThemeMode::Dark,
-            color_table: v.color_table.map_values(|v| HexStr(Srgba::from(v).into())),
+            dark: v.dark(),
+            color_map: v.take().1.map_values(|v| HexStr(Srgba::from(v).into()))
         }
     }
 }

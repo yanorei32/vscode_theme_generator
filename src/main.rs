@@ -2,7 +2,6 @@ use clap::Parser;
 use cli::Cli;
 
 mod cli;
-mod color;
 mod optimize;
 mod palette;
 mod setting;

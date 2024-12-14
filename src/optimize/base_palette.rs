@@ -3,7 +3,7 @@ use std::time::{self, Duration};
 use palette::{FromColor, IntoColor, Lch};
 use rand::{rngs::ThreadRng, seq::SliceRandom, Rng};
 
-use crate::{color::Color, palette::base_palette::BasePalette};
+use crate::{model::Color, palette::base_palette::BasePalette};
 
 pub fn optimize_base_palette(
     palette: &BasePalette,
@@ -33,21 +33,21 @@ pub fn optimize_base_palette(
             + (end_temp - start_temp)
                 * (start.elapsed().as_micros() as f32 / time_limit.as_micros() as f32);
 
-        let diff = next.score - cursor.score;
+        let diff = next.score() - cursor.score();
         let r: f32 = rng.gen();
 
-        if r < (diff / temp).exp() || cursor.score < next.score {
+        if r < (diff / temp).exp() || cursor.score() < next.score() {
             cursor = next;
         }
 
-        if best.score < cursor.score {
+        if best.score() < cursor.score() {
             best = cursor.clone();
         }
 
         count += 1;
     }
 
-    println!("loop count: {}, score: {}", count, best.score);
+    println!("loop count: {}, score: {}", count, best.score());
     best
 }
 
@@ -80,15 +80,17 @@ pub fn random_edit_one_color_of(
     candidates: &[Color],
     rng: &mut ThreadRng,
 ) -> BasePalette {
-    let mut palette = palette.clone();
+    let palette = palette.clone();
 
     // if candidates is empty, do nothing
     let Some(target_color) = candidates.choose(rng) else {
         return palette;
     };
 
+    let (actual_mode, mut color_map, _) = palette.take();
+
     let change_type = ChangeType::random(rng).unwrap();
-    let rgb = palette.get(*target_color);
+    let rgb = color_map[*target_color];
     let mut lch = Lch::from_color(rgb);
 
     match change_type {
@@ -100,6 +102,7 @@ pub fn random_edit_one_color_of(
         ChangeType::DecH => lch.hue -= 3.0,
     }
 
-    palette.update(*target_color, lch.into_color());
-    palette
+    color_map[target_color] = lch.into_color();
+
+    BasePalette::from_parts(actual_mode, color_map)
 }

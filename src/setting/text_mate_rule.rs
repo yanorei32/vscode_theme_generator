@@ -1,5 +1,6 @@
 use serde::Serialize;
-use crate::color::HexStr;
+
+use crate::model::HexStr;
 
 #[derive(Serialize)]
 pub struct TextMateRule {
