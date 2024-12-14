@@ -12,7 +12,7 @@ trait OptimizerColorMapExt {
     fn calc_score(&self) -> f32;
 }
 
-impl OptimizerColorMapExt for ColorMap  {
+impl OptimizerColorMapExt for ColorMap {
     fn calc_score(&self) -> f32 {
         // TODO: これが期待通りに動いているか確認する
         use itertools::Itertools;
@@ -27,7 +27,7 @@ impl OptimizerColorMapExt for ColorMap  {
             })
             .sum();
 
-        let (l_ave, chroma_ave) = self.fg_color_luminouse_chroma();
+        let (l_ave, chroma_ave) = self.fg_color_avg_luminouse_chroma();
 
         let (l_point, chroma_point) =
             self.iter()

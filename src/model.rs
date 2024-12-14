@@ -18,6 +18,12 @@ pub enum ActualThemeMode {
     Light,
 }
 
+impl ActualThemeMode {
+    pub fn dark(&self) -> bool {
+        *self == Self::Dark
+    }
+}
+
 impl Display for ActualThemeMode {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), FmtError> {
         match self {

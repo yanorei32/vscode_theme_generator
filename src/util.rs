@@ -78,18 +78,18 @@ impl ReplaceAlphaExt for HexStr {
 
 pub trait ColorMapExt {
     fn base_color(&self) -> Srgb;
-    fn fg_color_luminouse_chroma(&self) -> (f32, f32);
+    fn fg_color_avg_luminouse_chroma(&self) -> (f32, f32);
 }
 
 impl ColorMapExt for ColorMap {
     fn base_color(&self) -> Srgb {
-        let (l, chroma) = self.fg_color_luminouse_chroma();
+        let (l, chroma) = self.fg_color_avg_luminouse_chroma();
         let bg = Lch::from_color(self[Color::Bg]);
 
         Srgb::from_color(Lch::new(l, chroma, bg.hue))
     }
 
-    fn fg_color_luminouse_chroma(&self) -> (f32, f32) {
+    fn fg_color_avg_luminouse_chroma(&self) -> (f32, f32) {
         let n = enum_iterator::all::<Color>()
             .filter(|c| !c.is_bg_color())
             .count() as f32;
