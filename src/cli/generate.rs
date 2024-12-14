@@ -1,13 +1,12 @@
 use std::{fs::create_dir_all, path::Path, str::FromStr};
 
 use clap::{Args, ValueEnum};
-use enum_iterator::all;
 use palette::Srgb;
 
 use crate::{
     cli::Cli,
     model::Color,
-    optimize::base_palette::optimize_base_palette,
+    optimize::optimize_color_map,
     palette::{base_palette::BasePalette, full_palette::FullPalette},
     setting::Setting,
 };
@@ -61,15 +60,18 @@ impl Cli {
 
         let palette = BasePalette::new(&args.rgb, &args.color_theme, &mut rng);
 
-        let palette = optimize_base_palette(
-            &palette,
-            &all::<Color>()
+        let (actual_mode, color_map) = palette.take();
+
+        let color_map = optimize_color_map(
+            &color_map,
+            &enum_iterator::all::<Color>()
                 .filter(|v| v.is_colorized())
                 .collect::<Vec<_>>(),
             100,
             &mut rng,
         );
 
+        let palette = BasePalette::from_parts(actual_mode, color_map);
         palette.export(&palette_path)?;
 
         let full_palette = FullPalette::from(palette);

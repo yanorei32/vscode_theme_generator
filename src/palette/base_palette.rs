@@ -20,7 +20,6 @@ use super::wrap::wrap_base_palette::WrapBasePalette;
 pub struct BasePalette {
     actual_mode: ActualThemeMode,
     color_map: StaticMap<Color, Srgb>,
-    score: f32,
 }
 
 impl BasePalette {
@@ -39,7 +38,6 @@ impl BasePalette {
 
     pub fn from_parts(actual_mode: ActualThemeMode, color_map: StaticMap<Color, Srgb>) -> Self {
         Self {
-            score: color_map.calc_score(),
             actual_mode,
             color_map,
         }
@@ -78,16 +76,12 @@ impl BasePalette {
         Self::from_parts(actual_mode, color_map)
     }
 
-    pub fn score(&self) -> f32 {
-        self.score
-    }
-
     pub fn dark(&self) -> bool {
         self.actual_mode == ActualThemeMode::Dark
     }
 
-    pub fn take(self) -> (ActualThemeMode, ColorMap, f32) {
-        (self.actual_mode, self.color_map, self.score)
+    pub fn take(self) -> (ActualThemeMode, ColorMap) {
+        (self.actual_mode, self.color_map)
     }
 }
 

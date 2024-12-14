@@ -1,10 +1,10 @@
-use std::{fs::create_dir_all, path::Path};
+use std::{fs::create_dir_all, option, path::Path};
 
 use clap::Args;
 
 use crate::{
     model::Color,
-    optimize::base_palette::optimize_base_palette,
+    optimize::optimize_color_map,
     palette::{base_palette::BasePalette, full_palette::FullPalette},
     setting::Setting,
     Cli,
@@ -46,8 +46,20 @@ impl Cli {
         let full_palette_path = path_prefix.join("full_palette.json");
         let setting_path = path_prefix.join("settings.json");
 
-        let palette = BasePalette::load(&palette_path)?.renew_colors(&args.fixs, &mut rng);
-        let palette = optimize_base_palette(&palette, &args.fixs, 100, &mut rng);
+        let (actual_mode, color_map) = BasePalette::load(&palette_path)?
+            .renew_colors(&args.fixs, &mut rng)
+            .take();
+
+        let color_map = optimize_color_map(
+            &color_map,
+            &enum_iterator::all::<Color>()
+                .filter(|v| v.is_colorized())
+                .collect::<Vec<_>>(),
+            100,
+            &mut rng,
+        );
+
+        let palette = BasePalette::from_parts(actual_mode, color_map);
         palette.export(&palette_path)?;
 
         let full_palette = FullPalette::from(palette);

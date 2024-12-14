@@ -21,7 +21,7 @@ pub struct FullPalette {
 
 impl From<BasePalette> for FullPalette {
     fn from(v: BasePalette) -> Self {
-        let (actual_mode, color_map, _score) = v.take();
+        let (actual_mode, color_map) = v.take();
 
         let generate = |rgb: Srgb, double_width: bool| -> [Srgb; 5] {
             let lch = Lch::from_color(rgb);
