@@ -22,13 +22,13 @@ impl BasePalette {
         let (actual_mode, bg, fg) = base_rgb.theme_color_for(color_theme);
 
         // TODO: これで動いてるか確認する
-        let color_table = static_map! {
+        let color_map = static_map! {
             Color::Bg => bg,
             Color::Gray => fg,
             _ => fg.new_by_random_hue(rng),
         };
 
-        Self::from_parts(actual_mode, color_table)
+        Self::from_parts(actual_mode, color_map)
     }
 
     pub fn from_parts(actual_mode: ActualThemeMode, color_map: StaticMap<Color, Srgb>) -> Self {
