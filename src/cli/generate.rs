@@ -1,12 +1,12 @@
 use std::{fs::create_dir_all, path::Path};
 
-use clap::{Args, ValueEnum};
+use clap::Args;
 use palette::Srgb;
 
 use crate::{
     cli::Cli,
-    io::{Setting, ExportExt},
-    model::Color,
+    io::{ExportExt, Setting},
+    model::{Color, ThemeDetectionPolicy},
     optimize::optimize_color_map,
     palette::{BasePalette, FullPalette},
 };
@@ -18,14 +18,7 @@ pub struct GenerateArgs {
     #[arg(short, long)]
     pub no_saturation_fg: bool,
     #[arg(short, long, default_value = "auto")]
-    pub color_theme: ColorTheme,
-}
-
-#[derive(Debug, Clone, ValueEnum, PartialEq)]
-pub enum ColorTheme {
-    Auto,
-    Dark,
-    Light,
+    pub color_theme: ThemeDetectionPolicy,
 }
 
 impl Cli {

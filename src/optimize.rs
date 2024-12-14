@@ -144,12 +144,14 @@ fn random_edit_one_color_of(
     candidates: &[Color],
     rng: &mut ThreadRng,
 ) -> ScoredColorMap {
+    let color_map = color_map.clone();
+
     // if candidates is empty, do nothing
     let Some(target_color) = candidates.choose(rng) else {
-        return color_map.clone();
+        return color_map;
     };
 
-    let mut color_map = color_map.clone().take();
+    let mut color_map = color_map.take();
 
     let change_type = ChangeType::random(rng).unwrap();
     let rgb = color_map[*target_color];

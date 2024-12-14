@@ -12,19 +12,26 @@ use serde::{
 
 pub type ColorMap = StaticMap<Color, Srgb>;
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
-pub enum ActualThemeMode {
+#[derive(Debug, Clone, ValueEnum, PartialEq, Eq)]
+pub enum ThemeDetectionPolicy {
+    Auto,
     Dark,
     Light,
 }
 
-impl ActualThemeMode {
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+pub enum Theme {
+    Dark,
+    Light,
+}
+
+impl Theme {
     pub fn dark(&self) -> bool {
         *self == Self::Dark
     }
 }
 
-impl Display for ActualThemeMode {
+impl Display for Theme {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), FmtError> {
         match self {
             Self::Dark => write!(f, "dark"),

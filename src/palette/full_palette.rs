@@ -2,20 +2,20 @@ use linearize::StaticMap;
 use palette::{FromColor as _, Lch, Srgb};
 
 use crate::{
-    model::{ActualThemeMode, Color},
+    model::{Theme, Color},
     palette::BasePalette,
     util::ColorMapExt,
 };
 
 #[derive(Debug, Clone)]
 pub struct FullPalette {
-    pub actual_mode: ActualThemeMode,
+    pub actual_mode: Theme,
 
     pub fg: [Srgb; 5],
     pub color_map: StaticMap<Color, [Srgb; 5]>,
 }
 
-fn make_variant(rgb: Srgb, mode: ActualThemeMode, double_width: bool) -> [Srgb; 5] {
+fn make_variant(rgb: Srgb, mode: Theme, double_width: bool) -> [Srgb; 5] {
     let lch = Lch::from_color(rgb);
     let width_cut = if double_width { 1.0 } else { 2.0 };
     let width = lch.l.min(100.0 - lch.l) / width_cut;
