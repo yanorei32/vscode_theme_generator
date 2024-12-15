@@ -1,6 +1,7 @@
 use std::time::{self, Duration};
 
 use itertools::Itertools;
+use strum::VariantArray;
 use palette::{FromColor, IntoColor, Lch, Srgb};
 use rand::seq::SliceRandom;
 
@@ -8,7 +9,6 @@ use crate::{
     model::{Scoreable, Color, ColorMap, Linear, ScoredValue, SrgbColorMapExt},
     util::SrgbExt,
 };
-
 
 pub trait OptimizerExt {
     fn optimize<R: rand::Rng>(self, targets: &[Color], rng: &mut R) -> Self;
@@ -119,6 +119,7 @@ fn random_edit_one_color_of<R: rand::Rng>(
     ScoredValue::new(color_map)
 }
 
+#[derive(Clone, Copy, VariantArray)]
 enum Op {
     IncL,
     DecL,
@@ -130,16 +131,7 @@ enum Op {
 
 impl Op {
     fn choice<R: rand::Rng>(rng: &mut R) -> Self {
-        let n = rng.gen_range(0..6);
-        match n {
-            0 => Self::IncL,
-            1 => Self::DecL,
-            2 => Self::IncC,
-            3 => Self::DecC,
-            4 => Self::IncH,
-            5 => Self::DecH,
-            _ => unreachable!(),
-        }
+        *Self::VARIANTS.choose(rng).unwrap()
     }
 
     fn apply<I: IntoColor<Lch>, O: FromColor<Lch>>(&self, i: I) -> O {
