@@ -2,13 +2,13 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
-use linearize::StaticMap;
+use linearize::StaticCopyMap;
 use palette::Srgba;
 use serde::{Deserialize, Serialize};
 
 use crate::{
     io::{ExportExt, LoadExt},
-    model::{Theme, Color, HexStr},
+    model::{Color, HexStr, Theme},
     palette::{BasePalette, FullPalette},
 };
 
@@ -49,7 +49,7 @@ struct BasePaletteExportable {
     pub dark: bool,
 
     #[serde(flatten)]
-    pub color_map: StaticMap<Color, HexStr>,
+    pub color_map: StaticCopyMap<Color, HexStr>,
 }
 
 impl From<BasePalette> for BasePaletteExportable {
@@ -70,8 +70,8 @@ pub(in crate::io) struct FullPaletteExportable {
 
     // TODO: 構造が変
     #[serde(flatten)]
-    pub(in crate::io) color_map: StaticMap<Color, Vec<HexStr>>,
-    pub(in crate::io) fg: Vec<HexStr>,
+    pub(in crate::io) color_map: StaticCopyMap<Color, [HexStr; 5]>,
+    pub(in crate::io) fg: [HexStr; 5],
 }
 
 impl From<FullPalette> for FullPaletteExportable {
@@ -79,8 +79,8 @@ impl From<FullPalette> for FullPaletteExportable {
         Self {
             schema: "https://raw.githubusercontent.com/ecto0310/vscode_theme_generator/refs/heads/main/schema/full_palette.json".to_string(),
             dark: v.theme.dark(),
-            fg: v.fg.iter().map(|c| HexStr(Srgba::from(*c).into())).collect(),
-            color_map: v.color_map.map_values(|v| v.iter().map(|v| HexStr(Srgba::from(*v).into())).collect()),
+            fg: v.fg.map(|c| HexStr(Srgba::from(c).into())),
+            color_map: v.color_map.map_values(|v| v.map(|v| HexStr(Srgba::from(v).into()))),
         }
     }
 }

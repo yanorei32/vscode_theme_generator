@@ -1,4 +1,4 @@
-use linearize::static_map;
+use linearize::static_copy_map;
 use palette::Srgb;
 use rand::rngs::ThreadRng;
 
@@ -18,7 +18,7 @@ impl BasePalette {
         let (theme, bg, fg) = base_rgb.theme_color_for(policy);
 
         // TODO: これで動いてるか確認する
-        let color_map = static_map! {
+        let color_map = static_copy_map! {
             Color::Bg => bg,
             Color::Gray => fg,
             _ => fg.new_by_random_hue(rng),

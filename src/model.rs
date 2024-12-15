@@ -2,7 +2,7 @@ use std::fmt::{self, Display, Error as FmtError, Formatter};
 
 use clap::ValueEnum;
 use enum_iterator::Sequence;
-use linearize::{Linearize, StaticMap};
+use linearize::{Linearize, StaticCopyMap};
 use palette::{Srgb, Srgba, WithAlpha};
 use serde::{
     de::{self, Deserializer, Unexpected, Visitor},
@@ -10,7 +10,7 @@ use serde::{
     Deserialize, Serialize,
 };
 
-pub type ColorMap = StaticMap<Color, Srgb>;
+pub type ColorMap = StaticCopyMap<Color, Srgb>;
 
 #[derive(Debug, Clone, ValueEnum, PartialEq, Eq)]
 pub enum ThemeDetectionPolicy {

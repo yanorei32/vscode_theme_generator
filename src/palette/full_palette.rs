@@ -1,4 +1,4 @@
-use linearize::StaticMap;
+use linearize::StaticCopyMap;
 use palette::{FromColor, IntoColor, Lch, Srgb};
 
 use crate::{
@@ -12,7 +12,7 @@ pub struct FullPalette {
     pub theme: Theme,
 
     pub fg: [Srgb; 5],
-    pub color_map: StaticMap<Color, [Srgb; 5]>,
+    pub color_map: StaticCopyMap<Color, [Srgb; 5]>,
 }
 
 fn make_variant<I: IntoColor<Lch>, O: FromColor<Lch>>(
