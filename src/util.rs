@@ -1,7 +1,7 @@
 use linearize::static_copy_map;
 use palette::{color_difference::Ciede2000, FromColor, Lch, Srgb, WithAlpha};
 
-use crate::model::{Color, ColorMap, HexStr, Theme as T, ThemeDetectionPolicy as TD};
+use crate::model::{Color, ColorMap, HexStr, Theme as T, ThemeDetectionStrategy as S};
 
 const BLACK: Srgb = Srgb::new(0.0, 0.0, 0.0);
 const WHITE: Srgb = Srgb::new(1.0, 1.0, 1.0);
@@ -9,7 +9,7 @@ const WHITE: Srgb = Srgb::new(1.0, 1.0, 1.0);
 pub trait SrgbExt {
     fn compare(&self, other: &Self) -> f32;
     fn new_by_random_hue<R: rand::Rng>(&self, rng: &mut R) -> Self;
-    fn theme_color_for(&self, policy: TD) -> (T, Srgb, Srgb);
+    fn theme_color_for(&self, strategy: S) -> (T, Srgb, Srgb);
 }
 
 impl SrgbExt for Srgb {
@@ -23,27 +23,27 @@ impl SrgbExt for Srgb {
         Self::from_color(Lch::new(base_lch.l, base_lch.chroma, hue))
     }
 
-    fn theme_color_for(&self, theme_detection_policy: TD) -> (T, Srgb, Srgb) {
+    fn theme_color_for(&self, strategy: S) -> (T, Srgb, Srgb) {
         let self_lch = Lch::from_color(*self);
         let mid = Srgb::from_color(Lch::new(50.0, 50.0, self_lch.hue));
         let darken = Srgb::from_color(Lch::new(10.0, 10.0, self_lch.hue));
         let whiten = Srgb::from_color(Lch::new(95.0, 5.0, self_lch.hue));
 
         let (theme, bg, fg, is_default_theme) = if BLACK.compare(self) < 10.5 {
-            match theme_detection_policy {
-                TD::Auto | TD::Dark => (T::Dark, *self, mid, false),
-                TD::Light => (T::Light, whiten, mid, false),
+            match strategy {
+                S::Auto | S::Dark => (T::Dark, *self, mid, false),
+                S::Light => (T::Light, whiten, mid, false),
             }
         } else if WHITE.compare(self) < 10.5 {
-            match theme_detection_policy {
-                TD::Dark => (T::Dark, darken, mid, false),
-                TD::Auto | TD::Light => (T::Light, *self, mid, false),
+            match strategy {
+                S::Dark => (T::Dark, darken, mid, false),
+                S::Auto | S::Light => (T::Light, *self, mid, false),
             }
         } else {
-            let theme = match theme_detection_policy {
-                TD::Auto if 42.0 < darken.compare(self) => T::Dark,
-                TD::Auto | TD::Light => T::Light,
-                TD::Dark => T::Dark,
+            let theme = match strategy {
+                S::Auto if 42.0 < darken.compare(self) => T::Dark,
+                S::Auto | S::Light => T::Light,
+                S::Dark => T::Dark,
             };
 
             match theme {

@@ -13,7 +13,7 @@ use serde::{
 pub type ColorMap = StaticCopyMap<Color, Srgb>;
 
 #[derive(Debug, Clone, Copy, ValueEnum, PartialEq, Eq)]
-pub enum ThemeDetectionPolicy {
+pub enum ThemeDetectionStrategy {
     Auto,
     Dark,
     Light,

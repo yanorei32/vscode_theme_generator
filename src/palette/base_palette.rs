@@ -1,7 +1,7 @@
 use rand::rngs::ThreadRng;
 
 use crate::{
-    model::{Color, ColorMap, Theme, ThemeDetectionPolicy},
+    model::{Color, ColorMap, Theme, ThemeDetectionStrategy},
     util::{ColorMapExt, SrgbExt},
 };
 
@@ -19,7 +19,7 @@ impl BasePalette {
     // TODO: まだデータに足が生えて歩きだしてる。
     pub fn randomize_colors(&self, renew_targets: &[Color], rng: &mut ThreadRng) -> Self {
         let base = self.color_map.base_color();
-        let (theme, bg, _) = base.theme_color_for(ThemeDetectionPolicy::Auto);
+        let (theme, bg, _) = base.theme_color_for(ThemeDetectionStrategy::Auto);
 
         let mut color_map = self.color_map.clone();
 

@@ -6,7 +6,7 @@ use palette::Srgb;
 use crate::{
     cli::Cli,
     io::{ExportExt, Setting},
-    model::{Color, ColorMap, ThemeDetectionPolicy},
+    model::{Color, ColorMap, ThemeDetectionStrategy},
     optimize::OptimizerExt,
     palette::{BasePalette, FullPalette},
     util::{ColorMapExt, SrgbExt},
@@ -20,7 +20,7 @@ pub struct GenerateArgs {
     pub no_saturation_fg: bool,
 
     #[arg(short, long, default_value = "auto")]
-    pub color_theme: ThemeDetectionPolicy,
+    pub color_theme: ThemeDetectionStrategy,
 }
 
 impl Cli {
