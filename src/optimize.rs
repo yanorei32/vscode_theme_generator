@@ -5,7 +5,7 @@ use palette::{FromColor, IntoColor, Lch, Srgb};
 use rand::seq::SliceRandom;
 
 use crate::{
-    model::{BasePalette, Color, ColorMap, SrgbColorMapExt, Scoreable, ScoredValue},
+    model::{Color, ColorMap, SrgbColorMapExt, Scoreable, ScoredValue},
     util::SrgbExt,
 };
 
@@ -14,13 +14,9 @@ pub trait OptimizerExt {
 }
 
 // TODO: BasePaletteに依存しない操作
-impl OptimizerExt for BasePalette {
+impl OptimizerExt for ColorMap<Srgb> {
     fn optimize<R: rand::Rng>(self, targets: &[Color], rng: &mut R) -> Self {
-        let (actual_mode, color_map) = self.take();
-
-        let color_map = optimize_color_map(&color_map, targets, 100, rng);
-
-        Self::new(actual_mode, color_map)
+        optimize_color_map(&self, targets, 100, rng)
     }
 }
 

@@ -43,7 +43,9 @@ impl Cli {
         }
         //  TODO: 余計なColorMapに対する知識 END
 
-        let palette = BasePalette::new(theme, color_map).optimize(&args.fixs, &mut rng);
+        let color_map = color_map.optimize(&args.fixs, &mut rng);
+
+        let palette = BasePalette::new(theme, color_map);
 
         let full_palette = FullPalette::from(&palette);
 

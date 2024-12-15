@@ -6,7 +6,7 @@ use palette::Srgb;
 use crate::{
     cli::Cli,
     io::{ExportExt, Setting},
-    model::{BasePalette, Color, ColorMap, SrgbColorMapExt, FullPalette, ThemeDetectionStrategy},
+    model::{BasePalette, Color, ColorMap, FullPalette, SrgbColorMapExt, ThemeDetectionStrategy},
     optimize::OptimizerExt,
     util::SrgbExt,
 };
@@ -37,13 +37,13 @@ impl Cli {
 
         let (theme, bg, gray) = base.theme_color_for(args.color_theme);
 
-        let color_map = ColorMap::random_generate_by_color(bg, gray, &mut rng);
-
         // Don't optimize non-colored colors by default, likes Color::Gray
         let pre_optimizing_targets: Vec<_> = Color::colorized_iter().collect();
 
-        let palette =
-            BasePalette::new(theme, color_map).optimize(&pre_optimizing_targets, &mut rng);
+        let color_map = ColorMap::random_generate_by_color(bg, gray, &mut rng)
+            .optimize(&pre_optimizing_targets, &mut rng);
+
+        let palette = BasePalette::new(theme, color_map);
 
         let full_palette = FullPalette::from(&palette);
         let setting = Setting::new(&full_palette, args.no_saturation_ui);
