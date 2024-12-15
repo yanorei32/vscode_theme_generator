@@ -2,12 +2,27 @@ use std::time::{self, Duration};
 
 use itertools::Itertools;
 use palette::{FromColor, IntoColor, Lch};
-use rand::{rngs::ThreadRng, seq::SliceRandom, Rng};
+use rand::seq::SliceRandom;
 
 use crate::{
     model::{Color, ColorMap},
+    palette::BasePalette,
     util::{ColorMapExt, SrgbExt},
 };
+
+pub trait OptimizerExt {
+    fn optimize<R: rand::Rng>(self, targets: &[Color], rng: &mut R) -> Self;
+}
+
+impl OptimizerExt for BasePalette {
+    fn optimize<R: rand::Rng>(self, targets: &[Color], rng: &mut R) -> Self {
+        let (actual_mode, color_map) = self.take();
+
+        let color_map = optimize_color_map(&color_map, targets, 100, rng);
+
+        Self::from_parts(actual_mode, color_map)
+    }
+}
 
 trait OptimizerColorMapExt {
     fn calc_score(&self) -> f32;
@@ -33,10 +48,8 @@ impl OptimizerColorMapExt for ColorMap {
             .filter_map(|(k, v)| (!k.is_bg_color()).then_some(v))
             .map(|c| Lch::from_color(*c))
             .map(|c| (c.l, c.chroma))
-
             // absolute differencial
             .map(|(l, chroma)| ((l - l_ave).abs(), (chroma - chroma_ave).abs()))
-
             // scoring
             .map(|(l, chroma)| {
                 (
@@ -44,7 +57,6 @@ impl OptimizerColorMapExt for ColorMap {
                     (chroma - 5.0).max(0.0).powf(2.0),
                 )
             })
-
             // sum
             .fold((0.0, 0.0), |(l_acc, chroma_acc), (l, chroma)| {
                 (l_acc + l, chroma_acc + chroma)
@@ -77,11 +89,11 @@ impl ScoredColorMap {
     }
 }
 
-pub fn optimize_color_map(
+pub fn optimize_color_map<R: rand::Rng>(
     color_map: &ColorMap,
     candidates: &[Color],
     time_limit_ms: u64,
-    rng: &mut ThreadRng,
+    rng: &mut R,
 ) -> ColorMap {
     // if candidates is empty, do nothing
     if candidates.is_empty() {
@@ -125,10 +137,10 @@ pub fn optimize_color_map(
     best.take()
 }
 
-fn random_edit_one_color_of(
+fn random_edit_one_color_of<R: rand::Rng>(
     color_map: &ScoredColorMap,
     candidates: &[Color],
-    rng: &mut ThreadRng,
+    rng: &mut R,
 ) -> ScoredColorMap {
     let color_map = color_map.clone();
 
@@ -154,7 +166,7 @@ enum Operation {
 }
 
 impl Operation {
-    fn choice(rng: &mut ThreadRng) -> Self {
+    fn choice<R: rand::Rng>(rng: &mut R) -> Self {
         let n = rng.gen_range(0..6);
         match n {
             0 => Self::IncL,

@@ -5,7 +5,7 @@ use clap::Args;
 use crate::{
     io::{ExportExt, LoadExt, Setting},
     model::Color,
-    optimize::optimize_color_map,
+    optimize::OptimizerExt,
     palette::{BasePalette, FullPalette},
     Cli,
 };
@@ -28,20 +28,10 @@ impl Cli {
 
         let palette_path = path_prefix.join("palette.json");
 
-        let (actual_mode, color_map) = BasePalette::load(&palette_path)?
+        let palette = BasePalette::load(&palette_path)?
             .renew_colors(&args.fixs, &mut rng)
-            .take();
+            .optimize(&args.fixs, &mut rng);
 
-        let color_map = optimize_color_map(
-            &color_map,
-            &enum_iterator::all::<Color>()
-                .filter(|v| v.is_colorized())
-                .collect::<Vec<_>>(),
-            100,
-            &mut rng,
-        );
-
-        let palette = BasePalette::from_parts(actual_mode, color_map);
         palette.export(&palette_path)?;
 
         let full_palette = FullPalette::from(palette);

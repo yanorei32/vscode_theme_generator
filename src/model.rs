@@ -47,7 +47,9 @@ impl Display for Theme {
     }
 }
 
-#[derive(Debug, Clone, Copy, Linearize, Eq, PartialEq, Sequence, Serialize, Deserialize, ValueEnum)]
+#[derive(
+    Debug, Clone, Copy, Linearize, Eq, PartialEq, Sequence, Serialize, Deserialize, ValueEnum,
+)]
 #[serde(rename_all = "snake_case")]
 pub enum Color {
     Bg,
@@ -62,6 +64,10 @@ pub enum Color {
 }
 
 impl Color {
+    pub fn colorized_iter() -> impl Iterator<Item = Self> {
+        enum_iterator::all::<Self>().filter(|v| v.is_colorized())
+    }
+
     pub fn is_bg_color(&self) -> bool {
         *self == Self::Bg
     }
