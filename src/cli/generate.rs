@@ -33,9 +33,9 @@ impl Cli {
         let full_palette_path = path_prefix.join("full_palette.json");
         let setting_path = path_prefix.join("settings.json");
 
-        let base_color = Srgb::from(args.rgb);
+        let base = Srgb::from(args.rgb);
 
-        let (theme, bg, fg) = base_color.theme_color_for(args.color_theme);
+        let (theme, bg, fg) = base.theme_color_for(args.color_theme);
 
         let color_map = ColorMap::random_generate_by_color(bg, fg, &mut rng);
 
@@ -43,13 +43,15 @@ impl Cli {
         let pre_optimizing_targets: Vec<_> = Color::colorized_iter().collect();
 
         let palette = BasePalette::new(theme, color_map).optimize(&pre_optimizing_targets, &mut rng);
-        palette.export(&palette_path)?;
 
         let full_palette = FullPalette::from(palette);
-        full_palette.export(&full_palette_path)?;
 
         let setting = Setting::new(&full_palette, args.no_saturation_fg);
+
+        palette.export(&palette_path)?;
+        full_palette.export(&full_palette_path)?;
         setting.export(&setting_path)?;
+
         Ok(())
     }
 }

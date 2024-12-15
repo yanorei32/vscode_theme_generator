@@ -14,6 +14,7 @@ pub trait OptimizerExt {
     fn optimize<R: rand::Rng>(self, targets: &[Color], rng: &mut R) -> Self;
 }
 
+// TODO: BasePaletteに依存しない操作
 impl OptimizerExt for BasePalette {
     fn optimize<R: rand::Rng>(self, targets: &[Color], rng: &mut R) -> Self {
         let (actual_mode, color_map) = self.take();
