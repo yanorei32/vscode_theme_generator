@@ -58,7 +58,7 @@ impl Scoreable for ColorMap<Srgb> {
                 (l_acc + l, chroma_acc + chroma)
             });
 
-        base_score - l_point * 10000000.0 + chroma_point * 10000000.0
+        base_score - l_point * 10000000.0 - chroma_point * 10000000.0
     }
 }
 
