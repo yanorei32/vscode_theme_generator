@@ -15,6 +15,7 @@ pub struct RegenerateArgs {
     #[clap(short, long)]
     pub fixs: Vec<Color>,
 
+    // TODO: ここのリネーム
     #[arg(short, long)]
     pub no_saturation_fg: bool,
 }

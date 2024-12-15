@@ -36,23 +36,23 @@ struct FullPaletteExportable {
     monochrome: HexColors,
 }
 
-impl From<BasePalette> for BasePaletteExportable {
-    fn from(v: BasePalette) -> Self {
+impl From<&BasePalette> for BasePaletteExportable {
+    fn from(v: &BasePalette) -> Self {
         Self {
             schema: "https://raw.githubusercontent.com/ecto0310/vscode_theme_generator/refs/heads/main/schema/palette.json".to_string(),
             dark: v.theme().dark(),
-            color_map: v.take().1.map_values(|v| HexStr(Srgba::from(v).into()))
+            color_map: v.color_map().map_values(|v| HexStr(Srgba::from(v).into()))
         }
     }
 }
 
-impl From<FullPalette> for FullPaletteExportable {
-    fn from(v: FullPalette) -> Self {
+impl From<&FullPalette> for FullPaletteExportable {
+    fn from(v: &FullPalette) -> Self {
         Self {
             schema: "https://raw.githubusercontent.com/ecto0310/vscode_theme_generator/refs/heads/main/schema/full_palette.json".to_string(),
-            dark: v.theme.dark(),
-            monochrome: v.monochrome.map(|c| HexStr(Srgba::from(c).into())),
-            color_map: v.color_map.map_values(|v| v.map(|v| HexStr(Srgba::from(v).into()))),
+            dark: v.theme().dark(),
+            monochrome: v.monochrome().map(|c| HexStr(Srgba::from(c).into())),
+            color_map: v.color_map().map_values(|v| v.map(|v| HexStr(Srgba::from(v).into()))),
         }
     }
 }
@@ -71,7 +71,7 @@ impl LoadExt for BasePalette {
 
 impl ExportExt for BasePalette {
     fn export(&self, path: &Path) -> anyhow::Result<()> {
-        let palette = BasePaletteExportable::from(self.clone());
+        let palette = BasePaletteExportable::from(self);
         let palette = serde_json::to_string(&palette)?;
         File::create(path)?.write_all(palette.as_bytes())?;
         Ok(())
@@ -80,7 +80,7 @@ impl ExportExt for BasePalette {
 
 impl ExportExt for FullPalette {
     fn export(&self, path: &Path) -> anyhow::Result<()> {
-        let palette = FullPaletteExportable::from(self.clone());
+        let palette = FullPaletteExportable::from(self);
         let palette = serde_json::to_string(&palette)?;
         File::create(path)?.write_all(palette.as_bytes())?;
         Ok(())

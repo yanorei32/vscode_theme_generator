@@ -7,10 +7,25 @@ type FullPaletteValue = [Srgb; VARIANTS];
 
 #[derive(Debug, Clone)]
 pub struct FullPalette {
-    pub theme: Theme,
+    theme: Theme,
 
-    pub monochrome: FullPaletteValue,
-    pub color_map: ColorMap<FullPaletteValue>,
+    monochrome: FullPaletteValue,
+    color_map: ColorMap<FullPaletteValue>,
+}
+
+impl FullPalette {
+    pub fn theme(&self) -> Theme {
+        self.theme
+    }
+
+    pub fn color_map(&self) -> &ColorMap<FullPaletteValue> {
+        &self.color_map
+    }
+
+    pub fn monochrome(&self) -> &FullPaletteValue {
+        &self.monochrome
+    }
+
 }
 
 fn make_variant<I: IntoColor<Lch>, O: FromColor<Lch>>(

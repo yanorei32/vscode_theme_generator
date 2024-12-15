@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use super::text_mate_rule::TextMateRule;
-use crate::model::Color;
+use crate::model::{Color, ColorMap};
 
 #[derive(Serialize)]
 pub(super) struct EditorTokenColorCustomizations {
@@ -10,7 +10,7 @@ pub(super) struct EditorTokenColorCustomizations {
 }
 
 impl EditorTokenColorCustomizations {
-    pub(super) fn new(color_map: &super::ColorMap) -> Self {
+    pub(super) fn new(color_map: &ColorMap<super::HexColors>) -> Self {
         Self {
             text_mate_rules: vec![
                 TextMateRule::new(

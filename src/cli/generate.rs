@@ -18,6 +18,7 @@ pub struct GenerateArgs {
     #[arg(short, long)]
     pub no_saturation_fg: bool,
 
+    // TODO: ここのリネーム
     #[arg(short, long, default_value = "auto")]
     pub color_theme: ThemeDetectionStrategy,
 }
@@ -38,7 +39,7 @@ impl Cli {
 
         let color_map = ColorMap::random_generate_by_color(bg, gray, &mut rng);
 
-        // Don't optimize non-colored colors by deafult, likes Color::Gray
+        // Don't optimize non-colored colors by default, likes Color::Gray
         let pre_optimizing_targets: Vec<_> = Color::colorized_iter().collect();
 
         let palette =

@@ -16,12 +16,11 @@ impl BasePalette {
         self.theme
     }
 
-    pub fn take(self) -> (Theme, ColorMap<Srgb>) {
-        (self.theme, self.color_map)
+    pub fn color_map(&self) -> &ColorMap<Srgb> {
+        &self.color_map
     }
 
-    // for "impl From<&BasePalette> for FullPalette"
-    pub(in crate::model) fn color_map(&self) -> &ColorMap<Srgb> {
-        &self.color_map
+    pub fn take(self) -> (Theme, ColorMap<Srgb>) {
+        (self.theme, self.color_map)
     }
 }
