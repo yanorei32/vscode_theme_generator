@@ -45,9 +45,9 @@ impl Cli {
 
         let palette = BasePalette::new(theme, color_map).optimize(&args.fixs, &mut rng);
 
-        let full_palette = FullPalette::from(palette);
+        let full_palette = FullPalette::from(&palette);
 
-        let setting = Setting::new(full_palette, args.no_saturation_fg);
+        let setting = Setting::new(&full_palette, args.no_saturation_fg);
 
         palette.export(&palette_path)?;
         full_palette.export(&path_prefix.join("full_palette.json"))?;

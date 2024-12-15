@@ -1,6 +1,6 @@
 use crate::model::{ColorMap, Theme};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct BasePalette {
     theme: Theme,
     color_map: ColorMap,
@@ -17,5 +17,9 @@ impl BasePalette {
 
     pub fn take(self) -> (Theme, ColorMap) {
         (self.theme, self.color_map)
+    }
+
+    pub(in crate::model) fn color_map(&self) -> &ColorMap {
+        &self.color_map
     }
 }

@@ -1,38 +1,48 @@
 use std::{fs::File, io::Write, path::Path};
 
-use editor_token_color_customizations::EditorTokenColorCustomizations;
+use palette::Srgba;
+use linearize::StaticCopyMap;
 use serde::Serialize;
-use workbench_color_customizations::WorkbenchColorCustomizations;
-
-use crate::{
-    io::palette::FullPaletteExportable,
-    model::FullPalette,
-};
 
 pub mod editor_token_color_customizations;
 pub mod text_mate_rule;
 pub mod workbench_color_customizations;
 
+use editor_token_color_customizations::EditorTokenColorCustomizations;
+use workbench_color_customizations::WorkbenchColorCustomizations;
+
+use crate::model::{Color, FullPalette, HexStr, FULL_PALETTE_VARIANTS};
+
 #[derive(Serialize)]
 pub struct Setting {
     #[serde(rename = "workbench.colorCustomizations")]
     workbench_color_customizations: WorkbenchColorCustomizations,
+
     #[serde(rename = "editor.tokenColorCustomizations")]
     editor_token_color_customizations: EditorTokenColorCustomizations,
 }
 
+type HexColor= [HexStr; FULL_PALETTE_VARIANTS];
+type ColorMap = StaticCopyMap<Color, HexColor>;
+
+
 impl Setting {
-    pub fn new(palette: FullPalette, no_saturation_fg: bool) -> Self {
-        let palette = FullPaletteExportable::from(palette);
+    pub fn new(palette: &FullPalette, force_monochrome_ui_texts: bool) -> Self {
+        let color_map = palette
+            .color_map
+            .map_values(|v| v.map(|v| HexStr(Srgba::from(v).into())));
+
+        let monochrome = palette.monochrome.map(|v| HexStr(Srgba::from(v).into()));
+
+        let ui_gray = if force_monochrome_ui_texts {
+            monochrome
+        } else {
+            color_map[Color::Gray]
+        };
+
         Self {
-            workbench_color_customizations: WorkbenchColorCustomizations::new(
-                &palette,
-                no_saturation_fg,
-            ),
-            editor_token_color_customizations: EditorTokenColorCustomizations::new(
-                &palette,
-                no_saturation_fg,
-            ),
+            workbench_color_customizations: WorkbenchColorCustomizations::new(&color_map, ui_gray),
+            editor_token_color_customizations: EditorTokenColorCustomizations::new(&color_map),
         }
     }
 

@@ -62,15 +62,17 @@ impl From<BasePalette> for BasePaletteExportable {
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
-pub(in crate::io) struct FullPaletteExportable {
+struct FullPaletteExportable {
     #[serde(rename = "$schema")]
     schema: String,
     dark: bool,
 
-    // TODO: 構造が変
     #[serde(flatten)]
-    pub(in crate::io) color_map: StaticCopyMap<Color, [HexStr; 5]>,
-    pub(in crate::io) fg: [HexStr; 5],
+    color_map: StaticCopyMap<Color, [HexStr; 5]>,
+
+    // rename to 'fg' (historical reasons)
+    #[serde(rename = "fg")]
+    monochrome: [HexStr; 5],
 }
 
 impl From<FullPalette> for FullPaletteExportable {
@@ -78,7 +80,7 @@ impl From<FullPalette> for FullPaletteExportable {
         Self {
             schema: "https://raw.githubusercontent.com/ecto0310/vscode_theme_generator/refs/heads/main/schema/full_palette.json".to_string(),
             dark: v.theme.dark(),
-            fg: v.fg.map(|c| HexStr(Srgba::from(c).into())),
+            monochrome: v.monochrome.map(|c| HexStr(Srgba::from(c).into())),
             color_map: v.color_map.map_values(|v| v.map(|v| HexStr(Srgba::from(v).into()))),
         }
     }

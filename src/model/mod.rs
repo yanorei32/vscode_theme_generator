@@ -13,7 +13,7 @@ mod base_palette;
 pub use base_palette::BasePalette;
 
 mod full_palette;
-pub use full_palette::FullPalette;
+pub use full_palette::{FullPalette, FullPaletteValue, VARIANTS as FULL_PALETTE_VARIANTS};
 
 use clap::ValueEnum;
 

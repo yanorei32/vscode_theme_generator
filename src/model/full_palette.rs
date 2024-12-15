@@ -3,12 +3,15 @@ use palette::{FromColor, IntoColor, Lch, Srgb};
 
 use crate::model::{BasePalette, Color, ColorMapExt, Theme};
 
-#[derive(Debug, Clone, Copy)]
+pub const VARIANTS: usize = 5;
+pub type FullPaletteValue = [Srgb; VARIANTS];
+
+#[derive(Debug, Clone)]
 pub struct FullPalette {
     pub theme: Theme,
 
-    pub fg: [Srgb; 5],
-    pub color_map: StaticCopyMap<Color, [Srgb; 5]>,
+    pub monochrome: FullPaletteValue,
+    pub color_map: StaticCopyMap<Color, FullPaletteValue>,
 }
 
 fn make_variant<I: IntoColor<Lch>, O: FromColor<Lch>>(
@@ -36,20 +39,22 @@ fn make_variant<I: IntoColor<Lch>, O: FromColor<Lch>>(
     variants.map(|l| O::from_color(Lch::new(l, lch.chroma, lch.hue)))
 }
 
-impl From<BasePalette> for FullPalette {
-    fn from(v: BasePalette) -> Self {
-        let (actual_mode, color_map) = v.take();
+impl From<&BasePalette> for FullPalette {
+    fn from(p: &BasePalette) -> Self {
+        let color_map = p
+            .color_map()
+            .map(|color_key, rgb| make_variant(rgb, p.theme(), color_key == Color::Bg));
 
-        let fg = Srgb::from_color(Lch::new(
-            color_map.fg_color_avg_luminouse_chroma().0,
+        let monochrome_rgb = Srgb::from_color(Lch::new(
+            p.color_map().fg_color_avg_luminouse_chroma().0,
             0.0,
             0.0,
         ));
 
         Self {
-            theme: actual_mode,
-            fg: make_variant(fg, actual_mode, true),
-            color_map: color_map.map(|k, c| make_variant(c, actual_mode, k == Color::Bg)),
+            theme: p.theme(),
+            monochrome: make_variant(monochrome_rgb, p.theme(), true),
+            color_map,
         }
     }
 }
