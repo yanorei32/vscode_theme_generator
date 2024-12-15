@@ -8,8 +8,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     io::{ExportExt, LoadExt},
-    model::{Color, HexStr, Theme},
-    palette::{BasePalette, FullPalette},
+    model::{Color, HexStr, Theme, BasePalette, FullPalette},
 };
 
 impl LoadExt for BasePalette {

@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::{
-    model::{Color, HexStr},
+    model::{Color, HexStr, },
     util::ReplaceAlphaExt,
     io::palette::FullPaletteExportable,
 };

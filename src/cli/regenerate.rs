@@ -4,10 +4,9 @@ use clap::Args;
 
 use crate::{
     io::{ExportExt, LoadExt, Setting},
-    model::Color,
+    model::{BasePalette, Color, ColorMapExt, FullPalette},
     optimize::OptimizerExt,
-    palette::{BasePalette, FullPalette},
-    util::{ColorMapExt, SrgbExt},
+    util::SrgbExt,
     Cli,
 };
 
@@ -48,7 +47,7 @@ impl Cli {
 
         let full_palette = FullPalette::from(palette);
 
-        let setting = Setting::new(&full_palette, args.no_saturation_fg);
+        let setting = Setting::new(full_palette, args.no_saturation_fg);
 
         palette.export(&palette_path)?;
         full_palette.export(&path_prefix.join("full_palette.json"))?;

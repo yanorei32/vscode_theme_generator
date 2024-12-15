@@ -5,9 +5,8 @@ use palette::{FromColor, IntoColor, Lch};
 use rand::seq::SliceRandom;
 
 use crate::{
-    model::{Color, ColorMap},
-    palette::BasePalette,
-    util::{ColorMapExt, SrgbExt},
+    model::{BasePalette, Color, ColorMap, ColorMapExt},
+    util::SrgbExt,
 };
 
 pub trait OptimizerExt {

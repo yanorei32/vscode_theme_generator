@@ -70,4 +70,3 @@ impl<'de> Deserialize<'de> for HexStr {
         deserializer.deserialize_str(HexStrVisitor)
     }
 }
-

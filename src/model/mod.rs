@@ -3,13 +3,21 @@ use std::fmt::{Display, Error as FmtError, Formatter};
 mod hexstr;
 pub use hexstr::HexStr;
 
-use clap::ValueEnum;
-use enum_iterator::Sequence;
-use linearize::{Linearize, StaticCopyMap};
-use palette::Srgb;
-use serde::{Deserialize, Serialize};
+mod color;
+pub use color::Color;
 
-pub type ColorMap = StaticCopyMap<Color, Srgb>;
+mod colormap;
+pub use colormap::{ColorMap, ColorMapExt};
+
+mod base_palette;
+pub use base_palette::BasePalette;
+
+mod full_palette;
+pub use full_palette::FullPalette;
+
+use clap::ValueEnum;
+use linearize::StaticCopyMap;
+use palette::Srgb;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
 pub enum ThemeDetectionStrategy {
@@ -52,36 +60,5 @@ impl Display for Theme {
             Self::Dark => write!(f, "dark"),
             Self::Light => write!(f, "light"),
         }
-    }
-}
-
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, Linearize, Sequence, Serialize, Deserialize, ValueEnum,
-)]
-#[serde(rename_all = "snake_case")]
-pub enum Color {
-    // Fg is always automatically calculated by FullPalette
-    Bg,
-    Gray,
-    Blue,
-    Green,
-    Yellow,
-    Orange,
-    Red,
-    Purple,
-    Pink,
-}
-
-impl Color {
-    pub fn colorized_iter() -> impl Iterator<Item = Self> {
-        enum_iterator::all::<Self>().filter(|v| v.is_colorized())
-    }
-
-    pub fn is_bg_color(&self) -> bool {
-        *self == Self::Bg
-    }
-
-    pub fn is_colorized(&self) -> bool {
-        !matches!(self, Self::Bg | Self::Gray)
     }
 }

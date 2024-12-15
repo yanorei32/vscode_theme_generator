@@ -1,11 +1,7 @@
 use linearize::StaticCopyMap;
 use palette::{FromColor, IntoColor, Lch, Srgb};
 
-use crate::{
-    model::{Color, Theme},
-    palette::BasePalette,
-    util::ColorMapExt,
-};
+use crate::model::{BasePalette, Color, ColorMapExt, Theme};
 
 #[derive(Debug, Clone, Copy)]
 pub struct FullPalette {
