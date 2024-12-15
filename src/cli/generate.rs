@@ -34,9 +34,9 @@ impl Cli {
 
         let base = Srgb::from(args.rgb);
 
-        let (theme, bg, fg) = base.theme_color_for(args.color_theme);
+        let (theme, bg, gray) = base.theme_color_for(args.color_theme);
 
-        let color_map = ColorMap::random_generate_by_color(bg, fg, &mut rng);
+        let color_map = ColorMap::random_generate_by_color(bg, gray, &mut rng);
 
         // Don't optimize non-colored colors by deafult, likes Color::Gray
         let pre_optimizing_targets: Vec<_> = Color::colorized_iter().collect();

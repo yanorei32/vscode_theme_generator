@@ -16,8 +16,6 @@ mod full_palette;
 pub use full_palette::FullPalette;
 
 use clap::ValueEnum;
-use linearize::StaticCopyMap;
-use palette::Srgb;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
 pub enum ThemeDetectionStrategy {

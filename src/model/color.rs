@@ -3,6 +3,7 @@ use enum_iterator::Sequence;
 use linearize::Linearize;
 use serde::{Deserialize, Serialize};
 
+/// Base Palette
 #[derive(
     Debug, Clone, Copy, PartialEq, Eq, Linearize, Sequence, Serialize, Deserialize, ValueEnum,
 )]
