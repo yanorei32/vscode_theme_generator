@@ -8,7 +8,6 @@ const WHITE: Srgb = Srgb::new(1.0, 1.0, 1.0);
 
 pub trait SrgbExt {
     fn compare(&self, other: &Self) -> f32;
-    fn new_with_hue(&self, hue: f32) -> Self;
     fn new_by_random_hue<R: rand::Rng>(&self, rng: &mut R) -> Self;
     fn theme_color_for(&self, policy: TD) -> (T, Srgb, Srgb);
 }
@@ -18,14 +17,10 @@ impl SrgbExt for Srgb {
         Lch::from_color(*self).difference(Lch::from_color(*other))
     }
 
-    fn new_with_hue(&self, hue: f32) -> Self {
-        let base_lch = Lch::from_color(*self);
-        Self::from_color(Lch::new(base_lch.l, base_lch.chroma, hue))
-    }
-
     fn new_by_random_hue<R: rand::Rng>(&self, rng: &mut R) -> Self {
         let hue = rng.gen_range(0.0..360.0);
-        self.new_with_hue(hue)
+        let base_lch = Lch::from_color(*self);
+        Self::from_color(Lch::new(base_lch.l, base_lch.chroma, hue))
     }
 
     fn theme_color_for(&self, theme_detection_policy: TD) -> (T, Srgb, Srgb) {
