@@ -151,12 +151,12 @@ fn random_edit_one_color_of<R: rand::Rng>(
 
     let mut color_map = color_map.take();
 
-    color_map[target_choice] = Operation::choice(rng).apply(color_map[target_choice]);
+    color_map[target_choice] = Op::choice(rng).apply(color_map[target_choice]);
 
     ScoredColorMap::from(color_map)
 }
 
-enum Operation {
+enum Op {
     IncL,
     DecL,
     IncC,
@@ -165,7 +165,7 @@ enum Operation {
     DecH,
 }
 
-impl Operation {
+impl Op {
     fn choice<R: rand::Rng>(rng: &mut R) -> Self {
         let n = rng.gen_range(0..6);
         match n {

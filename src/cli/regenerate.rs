@@ -7,6 +7,7 @@ use crate::{
     model::Color,
     optimize::OptimizerExt,
     palette::{BasePalette, FullPalette},
+    util::{ColorMapExt, SrgbExt},
     Cli,
 };
 
@@ -28,9 +29,20 @@ impl Cli {
 
         let palette_path = path_prefix.join("palette.json");
 
-        let palette = BasePalette::load(&palette_path)?
-            .randomize_colors(&args.fixs, &mut rng)
-            .optimize(&args.fixs, &mut rng);
+        let (theme, mut color_map) = BasePalette::load(&palette_path)?.take();
+
+        let base = color_map.base_color();
+        let (_, bg, _) = base.theme_color_for(theme.into());
+
+        for &target in &args.fixs {
+            if target.is_bg_color() {
+                color_map[target] = bg;
+            } else {
+                color_map[target] = base.new_by_random_hue(&mut rng);
+            }
+        }
+
+        let palette = BasePalette::new(theme, color_map).optimize(&args.fixs, &mut rng);
 
         palette.export(&palette_path)?;
 

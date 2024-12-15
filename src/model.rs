@@ -12,14 +12,23 @@ use serde::{
 
 pub type ColorMap = StaticCopyMap<Color, Srgb>;
 
-#[derive(Debug, Clone, Copy, ValueEnum, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
 pub enum ThemeDetectionStrategy {
     Auto,
     Dark,
     Light,
 }
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+impl From<Theme> for ThemeDetectionStrategy {
+    fn from(value: Theme) -> Self {
+        match value {
+            Theme::Dark => Self::Dark,
+            Theme::Light => Self::Light,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Theme {
     Dark,
     Light,
@@ -48,10 +57,11 @@ impl Display for Theme {
 }
 
 #[derive(
-    Debug, Clone, Copy, Linearize, Eq, PartialEq, Sequence, Serialize, Deserialize, ValueEnum,
+    Debug, Clone, Copy, PartialEq, Eq, Linearize, Sequence, Serialize, Deserialize, ValueEnum,
 )]
 #[serde(rename_all = "snake_case")]
 pub enum Color {
+    // Fg is always automatically calculated by FullPalette
     Bg,
     Gray,
     Blue,
