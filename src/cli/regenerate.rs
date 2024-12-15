@@ -29,7 +29,7 @@ impl Cli {
         let palette_path = path_prefix.join("palette.json");
 
         let palette = BasePalette::load(&palette_path)?
-            .renew_colors(&args.fixs, &mut rng)
+            .randomize_colors(&args.fixs, &mut rng)
             .optimize(&args.fixs, &mut rng);
 
         palette.export(&palette_path)?;

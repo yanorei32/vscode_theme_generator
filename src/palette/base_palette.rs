@@ -5,7 +5,7 @@ use crate::{
     util::{ColorMapExt, SrgbExt},
 };
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct BasePalette {
     theme: Theme,
     color_map: ColorMap,
@@ -17,7 +17,7 @@ impl BasePalette {
     }
 
     // TODO: まだデータに足が生えて歩きだしてる。
-    pub fn renew_colors(&self, renew_targets: &[Color], rng: &mut ThreadRng) -> Self {
+    pub fn randomize_colors(&self, renew_targets: &[Color], rng: &mut ThreadRng) -> Self {
         let base = self.color_map.base_color();
         let (theme, bg, _) = base.theme_color_for(ThemeDetectionPolicy::Auto);
 

@@ -7,7 +7,7 @@ use crate::{
     util::ColorMapExt,
 };
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct FullPalette {
     pub theme: Theme,
 

@@ -35,7 +35,7 @@ impl Cli {
 
         let optimize_targets: Vec<_> = Color::colorized_iter().collect();
 
-        let base_color: Srgb = args.rgb.into();
+        let base_color = Srgb::from(args.rgb);
 
         let (theme, bg, fg) = base_color.theme_color_for(args.color_theme);
         let color_map = ColorMap::random_generate_by_color(bg, fg, &mut rng);
