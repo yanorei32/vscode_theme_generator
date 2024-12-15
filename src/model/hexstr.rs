@@ -11,7 +11,7 @@ use serde::{
 pub struct HexStr(pub Srgba<u8>);
 
 fn srgba_format_short_hex(c: Srgba<u8>) -> String {
-    if c.alpha != 0 {
+    if c.alpha != 255 {
         format!("#{:x}", c)
     } else {
         format!("#{:x}", c.color)
