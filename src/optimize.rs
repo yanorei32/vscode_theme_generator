@@ -5,9 +5,10 @@ use palette::{FromColor, IntoColor, Lch, Srgb};
 use rand::seq::SliceRandom;
 
 use crate::{
-    model::{Color, ColorMap, Linear, Scoreable, ScoredValue, SrgbColorMapExt},
+    model::{Scoreable, Color, ColorMap, Linear, ScoredValue, SrgbColorMapExt},
     util::SrgbExt,
 };
+
 
 pub trait OptimizerExt {
     fn optimize<R: rand::Rng>(self, targets: &[Color], rng: &mut R) -> Self;
@@ -104,14 +105,14 @@ fn random_edit_one_color_of<R: rand::Rng>(
     candidates: &[Color],
     rng: &mut R,
 ) -> ScoredValue<ColorMap<Srgb>> {
-    let color_map = color_map.clone();
+    let scored_color_map = color_map.clone();
 
     // if candidates is empty, do nothing
     let Some(target_choice) = candidates.choose(rng) else {
-        return color_map;
+        return scored_color_map;
     };
 
-    let mut color_map = color_map.take();
+    let mut color_map = scored_color_map.take();
 
     color_map[target_choice] = Op::choice(rng).apply(color_map[target_choice]);
 

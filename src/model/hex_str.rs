@@ -10,11 +10,19 @@ use serde::{
 #[derive(Debug, Clone, Copy)]
 pub struct HexStr(pub Srgba<u8>);
 
+impl HexStr {
+    pub fn alpha(&self, alpha: f32) -> Self {
+        let alpha = (u8::MAX as f32 * alpha) as u8;
+        HexStr(self.0.color.with_alpha(alpha))
+    }
+}
+
 fn srgba_format_short_hex(c: Srgba<u8>) -> String {
-    if c.alpha != 255 {
-        format!("#{:x}", c)
-    } else {
+    // ommit alpha if alpha is 255
+    if c.alpha == 255 {
         format!("#{:x}", c.color)
+    } else {
+        format!("#{:x}", c)
     }
 }
 

@@ -1,6 +1,6 @@
-use palette::{color_difference::Ciede2000, FromColor, Lch, Srgb, WithAlpha};
+use palette::{color_difference::Ciede2000, FromColor, Lch, Srgb};
 
-use crate::model::{HexStr, Theme as T, ThemeDetectionStrategy as S};
+use crate::model::{Theme as T, ThemeDetectionStrategy as S};
 
 const BLACK: Srgb = Srgb::new(0.0, 0.0, 0.0);
 const WHITE: Srgb = Srgb::new(1.0, 1.0, 1.0);
@@ -57,13 +57,3 @@ impl SrgbExt for Srgb {
     }
 }
 
-pub trait ReplaceAlphaExt {
-    fn alpha(&self, alpha: f32) -> Self;
-}
-
-impl ReplaceAlphaExt for HexStr {
-    fn alpha(&self, alpha: f32) -> Self {
-        let alpha = (u8::MAX as f32 * alpha) as u8;
-        HexStr(self.0.color.with_alpha(alpha))
-    }
-}

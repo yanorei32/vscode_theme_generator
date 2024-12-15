@@ -1,9 +1,6 @@
 use serde::Serialize;
 
-use crate::{
-    model::{Color, HexStr, ColorMap},
-    util::ReplaceAlphaExt,
-};
+use crate::model::{Color, ColorMap, HexStr};
 
 #[derive(Serialize)]
 pub(super) struct WorkbenchColorCustomizations {

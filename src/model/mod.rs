@@ -1,13 +1,13 @@
 use std::fmt::{Display, Error as FmtError, Formatter};
 
-mod hexstr;
-pub use hexstr::HexStr;
+mod hex_str;
+pub use hex_str::HexStr;
 
 mod color;
 pub use color::Color;
 
-mod colormap;
-pub use colormap::{ColorMap, SrgbColorMapExt};
+mod color_map;
+pub use color_map::{ColorMap, SrgbColorMapExt};
 
 mod base_palette;
 pub use base_palette::BasePalette;

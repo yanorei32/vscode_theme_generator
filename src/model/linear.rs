@@ -14,4 +14,3 @@ impl<T: Num + Copy> Linear<T> {
         self.start + (self.end - self.start) * normalized
     }
 }
-
