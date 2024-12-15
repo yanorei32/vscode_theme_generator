@@ -1,7 +1,7 @@
 use linearize::static_copy_map;
 use palette::{color_difference::Ciede2000, FromColor, Lch, Srgb, WithAlpha};
 
-use crate::model::{Color, ColorMap, HexStr, Theme as T, Theme, ThemeDetectionPolicy as TD};
+use crate::model::{Color, ColorMap, HexStr, Theme as T, ThemeDetectionPolicy as TD};
 
 const BLACK: Srgb = Srgb::new(0.0, 0.0, 0.0);
 const WHITE: Srgb = Srgb::new(1.0, 1.0, 1.0);
@@ -63,31 +63,30 @@ impl SrgbExt for Srgb {
 }
 
 pub trait ColorMapExt {
-    fn generate_by_color<R: rand::Rng, C: Into<Srgb>>(
-        base_color: C,
-        policy: TD,
+    fn random_generate_by_color<R: rand::Rng, CFg: Into<Srgb> + Copy, CBg: Into<Srgb> + Copy>(
+        bg_color: CBg,
+        fg_color: CFg,
         rng: &mut R,
-    ) -> (Theme, Self);
+    ) -> Self;
+
     fn base_color(&self) -> Srgb;
     fn fg_color_avg_luminouse_chroma(&self) -> (f32, f32);
 }
 
 impl ColorMapExt for ColorMap {
-    fn generate_by_color<R: rand::Rng, C: Into<Srgb>>(
-        base_color: C,
-        policy: TD,
+    fn random_generate_by_color<R: rand::Rng, CFg: Into<Srgb> + Copy, CBg: Into<Srgb> + Copy>(
+        bg: CBg,
+        fg: CFg,
         rng: &mut R,
-    ) -> (Theme, Self) {
-        let (theme, bg, fg) = base_color.into().theme_color_for(policy);
+    ) -> Self {
+        let fg = fg.into();
+        let bg = bg.into();
 
-        // TODO: これで動いてるか確認する
-        let color_map = static_copy_map! {
+        static_copy_map! {
             Color::Bg => bg,
             Color::Gray => fg,
             _ => fg.new_by_random_hue(rng),
-        };
-
-        (theme, color_map)
+        }
     }
 
     fn base_color(&self) -> Srgb {
