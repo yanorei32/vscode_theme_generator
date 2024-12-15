@@ -30,6 +30,8 @@ impl Cli {
         let palette_path = path_prefix.join("palette.json");
 
         let (theme, mut color_map) = BasePalette::load(&palette_path)?.take();
+
+        //  TODO: 余計なColorMapに対する知識 BEGIN
         let base = color_map.base_color();
 
         for &target in &args.fixs {
@@ -40,6 +42,7 @@ impl Cli {
                 color_map[target] = base.new_by_random_hue(&mut rng);
             }
         }
+        //  TODO: 余計なColorMapに対する知識 END
 
         let palette = BasePalette::new(theme, color_map).optimize(&args.fixs, &mut rng);
 

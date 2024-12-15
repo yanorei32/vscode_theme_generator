@@ -23,7 +23,7 @@ impl SrgbExt for Srgb {
         Self::from_color(Lch::new(base_lch.l, base_lch.chroma, hue))
     }
 
-    // TODO: データ型が変な知識持ってる
+    // TODO: データ型が変な知識持ってる。
     fn theme_color_for(&self, strategy: S) -> (T, Srgb, Srgb) {
         let self_lch = Lch::from_color(*self);
         let mid = Srgb::from_color(Lch::new(50.0, 50.0, self_lch.hue));
