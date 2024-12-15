@@ -58,9 +58,9 @@ impl SrgbExt for Srgb {
 }
 
 pub trait ColorMapExt {
-    fn random_generate_by_color<R: rand::Rng, CFg: Into<Srgb> + Copy, CBg: Into<Srgb> + Copy>(
+    fn random_generate_by_color<R: rand::Rng, CGray: Into<Srgb> + Copy, CBg: Into<Srgb> + Copy>(
         bg_color: CBg,
-        fg_color: CFg,
+        cgray_color: CGray,
         rng: &mut R,
     ) -> Self;
 
@@ -69,18 +69,18 @@ pub trait ColorMapExt {
 }
 
 impl ColorMapExt for ColorMap {
-    fn random_generate_by_color<R: rand::Rng, CFg: Into<Srgb> + Copy, CBg: Into<Srgb> + Copy>(
+    fn random_generate_by_color<R: rand::Rng, CGray: Into<Srgb> + Copy, CBg: Into<Srgb> + Copy>(
         bg: CBg,
-        fg: CFg,
+        gray: CGray,
         rng: &mut R,
     ) -> Self {
-        let fg = fg.into();
+        let gray = gray.into();
         let bg = bg.into();
 
         static_copy_map! {
             Color::Bg => bg,
-            Color::Gray => fg,
-            _ => fg.new_by_random_hue(rng),
+            Color::Gray => gray,
+            _ => gray.new_by_random_hue(rng),
         }
     }
 

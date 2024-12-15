@@ -30,12 +30,11 @@ impl Cli {
         let palette_path = path_prefix.join("palette.json");
 
         let (theme, mut color_map) = BasePalette::load(&palette_path)?.take();
-
         let base = color_map.base_color();
-        let (_, bg, _) = base.theme_color_for(theme.into());
 
         for &target in &args.fixs {
             if target.is_bg_color() {
+                let (_, bg, _) = base.theme_color_for(theme.into());
                 color_map[target] = bg;
             } else {
                 color_map[target] = base.new_by_random_hue(&mut rng);
@@ -44,12 +43,12 @@ impl Cli {
 
         let palette = BasePalette::new(theme, color_map).optimize(&args.fixs, &mut rng);
 
-        palette.export(&palette_path)?;
-
         let full_palette = FullPalette::from(palette);
-        full_palette.export(&path_prefix.join("full_palette.json"))?;
 
         let setting = Setting::new(&full_palette, args.no_saturation_fg);
+
+        palette.export(&palette_path)?;
+        full_palette.export(&path_prefix.join("full_palette.json"))?;
         setting.export(&path_prefix.join("settings.json"))?;
 
         Ok(())

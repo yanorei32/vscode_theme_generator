@@ -42,8 +42,6 @@ impl Cli {
         // Don't optimize non-colored colors by deafult, likes Color::Gray
         let pre_optimizing_targets: Vec<_> = Color::colorized_iter().collect();
 
-
-
         let palette = BasePalette::new(theme, color_map).optimize(&pre_optimizing_targets, &mut rng);
         palette.export(&palette_path)?;
 
