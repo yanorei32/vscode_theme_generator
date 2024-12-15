@@ -6,9 +6,10 @@ use palette::Srgb;
 use crate::{
     cli::Cli,
     io::{ExportExt, Setting},
-    model::{Color, ThemeDetectionPolicy},
+    model::{Color, ColorMap, ThemeDetectionPolicy},
     optimize::OptimizerExt,
     palette::{BasePalette, FullPalette},
+    util::ColorMapExt,
 };
 
 #[derive(Debug, Clone, Args)]
@@ -34,8 +35,9 @@ impl Cli {
 
         let optimize_targets: Vec<_> = Color::colorized_iter().collect();
 
-        let palette = BasePalette::new(&args.rgb.into(), &args.color_theme, &mut rng)
-            .optimize(&optimize_targets, &mut rng);
+        let (theme, color_map) = ColorMap::generate_by_color(args.rgb, args.color_theme, &mut rng);
+
+        let palette = BasePalette::new(theme, color_map).optimize(&optimize_targets, &mut rng);
 
         palette.export(&palette_path)?;
 

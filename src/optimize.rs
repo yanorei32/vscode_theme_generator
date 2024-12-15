@@ -20,7 +20,7 @@ impl OptimizerExt for BasePalette {
 
         let color_map = optimize_color_map(&color_map, targets, 100, rng);
 
-        Self::from_parts(actual_mode, color_map)
+        Self::new(actual_mode, color_map)
     }
 }
 

@@ -17,10 +17,10 @@ impl LoadExt for BasePalette {
         let palette = std::fs::read_to_string(path)?;
         let palette: BasePaletteExportable = serde_json::from_str(&palette)?;
 
-        let actual_mode = Theme::from_dark(palette.dark);
+        let theme = Theme::from_dark(palette.dark);
         let color_map = palette.color_map.map_values(|v| v.0.color.into());
 
-        Ok(Self::from_parts(actual_mode, color_map))
+        Ok(Self::new(theme, color_map))
     }
 }
 

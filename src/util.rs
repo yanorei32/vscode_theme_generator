@@ -1,7 +1,7 @@
+use linearize::static_copy_map;
 use palette::{color_difference::Ciede2000, FromColor, Lch, Srgb, WithAlpha};
-use rand::{rngs::ThreadRng, Rng};
 
-use crate::model::{Color, ColorMap, HexStr, Theme as T, ThemeDetectionPolicy as TD};
+use crate::model::{Color, ColorMap, HexStr, Theme as T, Theme, ThemeDetectionPolicy as TD};
 
 const BLACK: Srgb = Srgb::new(0.0, 0.0, 0.0);
 const WHITE: Srgb = Srgb::new(1.0, 1.0, 1.0);
@@ -9,8 +9,8 @@ const WHITE: Srgb = Srgb::new(1.0, 1.0, 1.0);
 pub trait SrgbExt {
     fn compare(&self, other: &Self) -> f32;
     fn new_with_hue(&self, hue: f32) -> Self;
-    fn new_by_random_hue(&self, rng: &mut ThreadRng) -> Self;
-    fn theme_color_for(&self, color_theme: &TD) -> (T, Srgb, Srgb);
+    fn new_by_random_hue<R: rand::Rng>(&self, rng: &mut R) -> Self;
+    fn theme_color_for(&self, policy: TD) -> (T, Srgb, Srgb);
 }
 
 impl SrgbExt for Srgb {
@@ -23,12 +23,12 @@ impl SrgbExt for Srgb {
         Self::from_color(Lch::new(base_lch.l, base_lch.chroma, hue))
     }
 
-    fn new_by_random_hue(&self, rng: &mut ThreadRng) -> Self {
+    fn new_by_random_hue<R: rand::Rng>(&self, rng: &mut R) -> Self {
         let hue = rng.gen_range(0.0..360.0);
         self.new_with_hue(hue)
     }
 
-    fn theme_color_for(&self, theme_detection_policy: &TD) -> (T, Srgb, Srgb) {
+    fn theme_color_for(&self, theme_detection_policy: TD) -> (T, Srgb, Srgb) {
         let self_lch = Lch::from_color(*self);
         let mid = Srgb::from_color(Lch::new(50.0, 50.0, self_lch.hue));
         let darken = Srgb::from_color(Lch::new(10.0, 10.0, self_lch.hue));
@@ -63,11 +63,33 @@ impl SrgbExt for Srgb {
 }
 
 pub trait ColorMapExt {
+    fn generate_by_color<R: rand::Rng, C: Into<Srgb>>(
+        base_color: C,
+        policy: TD,
+        rng: &mut R,
+    ) -> (Theme, Self);
     fn base_color(&self) -> Srgb;
     fn fg_color_avg_luminouse_chroma(&self) -> (f32, f32);
 }
 
 impl ColorMapExt for ColorMap {
+    fn generate_by_color<R: rand::Rng, C: Into<Srgb>>(
+        base_color: C,
+        policy: TD,
+        rng: &mut R,
+    ) -> (Theme, Self) {
+        let (theme, bg, fg) = base_color.into().theme_color_for(policy);
+
+        // TODO: これで動いてるか確認する
+        let color_map = static_copy_map! {
+            Color::Bg => bg,
+            Color::Gray => fg,
+            _ => fg.new_by_random_hue(rng),
+        };
+
+        (theme, color_map)
+    }
+
     fn base_color(&self) -> Srgb {
         let (l, chroma) = self.fg_color_avg_luminouse_chroma();
         let bg = Lch::from_color(self[Color::Bg]);
