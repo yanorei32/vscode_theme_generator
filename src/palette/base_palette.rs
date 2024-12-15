@@ -40,11 +40,11 @@ impl BasePalette {
 
         let mut color_map = self.color_map.clone();
 
-        for target in renew_targets {
+        for &target in renew_targets {
             if target.is_bg_color() {
-                color_map[*target] = bg;
+                color_map[target] = bg;
             } else {
-                color_map[*target] = base.new_by_random_hue(rng);
+                color_map[target] = base.new_by_random_hue(rng);
             }
         }
 
