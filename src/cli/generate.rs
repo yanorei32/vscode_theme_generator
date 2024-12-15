@@ -16,7 +16,7 @@ pub struct GenerateArgs {
     pub rgb: Srgb<u8>,
 
     #[arg(short, long)]
-    pub no_saturation_fg: bool,
+    pub no_saturation_ui: bool,
 
     // TODO: ここのリネーム
     #[arg(short, long, default_value = "auto")]
@@ -46,7 +46,7 @@ impl Cli {
             BasePalette::new(theme, color_map).optimize(&pre_optimizing_targets, &mut rng);
 
         let full_palette = FullPalette::from(&palette);
-        let setting = Setting::new(&full_palette, args.no_saturation_fg);
+        let setting = Setting::new(&full_palette, args.no_saturation_ui);
 
         palette.export(&palette_path)?;
         full_palette.export(&full_palette_path)?;

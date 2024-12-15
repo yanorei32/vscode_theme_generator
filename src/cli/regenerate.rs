@@ -15,9 +15,8 @@ pub struct RegenerateArgs {
     #[clap(short, long)]
     pub fixs: Vec<Color>,
 
-    // TODO: ここのリネーム
     #[arg(short, long)]
-    pub no_saturation_fg: bool,
+    pub no_saturation_ui: bool,
 }
 
 impl Cli {
@@ -48,7 +47,7 @@ impl Cli {
 
         let full_palette = FullPalette::from(&palette);
 
-        let setting = Setting::new(&full_palette, args.no_saturation_fg);
+        let setting = Setting::new(&full_palette, args.no_saturation_ui);
 
         palette.export(&palette_path)?;
         full_palette.export(&path_prefix.join("full_palette.json"))?;
