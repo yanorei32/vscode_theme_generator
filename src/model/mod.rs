@@ -15,8 +15,8 @@ pub use base_palette::BasePalette;
 mod full_palette;
 pub use full_palette::{FullPalette, VARIANTS as FULL_PALETTE_VARIANTS};
 
-mod scoreable;
-pub use scoreable::{Scoreable, ScoredValue};
+mod scored_value;
+pub use scored_value::{Scoreable, ScoredValue};
 
 use clap::ValueEnum;
 
