@@ -5,7 +5,7 @@ use palette::{FromColor, IntoColor, Lch, Srgb};
 use rand::seq::SliceRandom;
 
 use crate::{
-    model::{BasePalette, Color, ColorMap, SrgbColorMapExt},
+    model::{BasePalette, Color, ColorMap, SrgbColorMapExt, Scoreable, ScoredValue},
     util::SrgbExt,
 };
 
@@ -24,11 +24,7 @@ impl OptimizerExt for BasePalette {
     }
 }
 
-trait OptimizerColorMapExt {
-    fn calc_score(&self) -> f32;
-}
-
-impl OptimizerColorMapExt for ColorMap<Srgb> {
+impl Scoreable for ColorMap<Srgb> {
     fn calc_score(&self) -> f32 {
         // TODO: これが期待通りに動いているか確認する
         let base_score: f32 = enum_iterator::all::<Color>()
@@ -66,30 +62,6 @@ impl OptimizerColorMapExt for ColorMap<Srgb> {
     }
 }
 
-// TODO: ScoredValue<T> にして追いやるべきかも
-#[derive(Debug, Clone)]
-struct ScoredColorMap {
-    color_map: ColorMap<Srgb>,
-    score: f32,
-}
-
-impl ScoredColorMap {
-    fn from(color_map: ColorMap<Srgb>) -> Self {
-        Self {
-            score: color_map.calc_score(),
-            color_map,
-        }
-    }
-
-    fn score(&self) -> f32 {
-        self.score
-    }
-
-    fn take(self) -> ColorMap<Srgb> {
-        self.color_map
-    }
-}
-
 pub fn optimize_color_map<R: rand::Rng>(
     color_map: &ColorMap<Srgb>,
     candidates: &[Color],
@@ -109,7 +81,7 @@ pub fn optimize_color_map<R: rand::Rng>(
 
     let mut count = 0;
 
-    let color_map = ScoredColorMap::from(color_map.clone());
+    let color_map = ScoredValue::new(color_map.clone());
     let mut best = color_map.clone();
     let mut cursor = color_map.clone();
 
@@ -139,10 +111,10 @@ pub fn optimize_color_map<R: rand::Rng>(
 }
 
 fn random_edit_one_color_of<R: rand::Rng>(
-    color_map: &ScoredColorMap,
+    color_map: &ScoredValue<ColorMap<Srgb>>,
     candidates: &[Color],
     rng: &mut R,
-) -> ScoredColorMap {
+) -> ScoredValue<ColorMap<Srgb>> {
     let color_map = color_map.clone();
 
     // if candidates is empty, do nothing
@@ -154,7 +126,7 @@ fn random_edit_one_color_of<R: rand::Rng>(
 
     color_map[target_choice] = Op::choice(rng).apply(color_map[target_choice]);
 
-    ScoredColorMap::from(color_map)
+    ScoredValue::new(color_map)
 }
 
 enum Op {
