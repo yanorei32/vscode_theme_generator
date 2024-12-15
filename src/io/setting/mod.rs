@@ -47,7 +47,7 @@ impl Setting {
 
 impl ExportExt for Setting {
     fn export(&self, path: &Path) -> anyhow::Result<()> {
-        let setting = serde_json::to_string(self)?;
+        let setting = serde_json::to_string_pretty(self)?;
         File::create(path)?.write_all(setting.as_bytes())?;
         Ok(())
     }

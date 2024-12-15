@@ -72,7 +72,7 @@ impl LoadExt for BasePalette {
 impl ExportExt for BasePalette {
     fn export(&self, path: &Path) -> anyhow::Result<()> {
         let palette = BasePaletteExportable::from(self);
-        let palette = serde_json::to_string(&palette)?;
+        let palette = serde_json::to_string_pretty(&palette)?;
         File::create(path)?.write_all(palette.as_bytes())?;
         Ok(())
     }
@@ -81,7 +81,7 @@ impl ExportExt for BasePalette {
 impl ExportExt for FullPalette {
     fn export(&self, path: &Path) -> anyhow::Result<()> {
         let palette = FullPaletteExportable::from(self);
-        let palette = serde_json::to_string(&palette)?;
+        let palette = serde_json::to_string_pretty(&palette)?;
         File::create(path)?.write_all(palette.as_bytes())?;
         Ok(())
     }
