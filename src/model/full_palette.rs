@@ -1,17 +1,16 @@
-use linearize::StaticCopyMap;
 use palette::{FromColor, IntoColor, Lch, Srgb};
 
-use crate::model::{BasePalette, Color, ColorMapExt, Theme};
+use crate::model::{BasePalette, Color, ColorMap, SrgbColorMapExt, Theme};
 
 pub const VARIANTS: usize = 5;
-pub type FullPaletteValue = [Srgb; VARIANTS];
+type FullPaletteValue = [Srgb; VARIANTS];
 
 #[derive(Debug, Clone)]
 pub struct FullPalette {
     pub theme: Theme,
 
     pub monochrome: FullPaletteValue,
-    pub color_map: StaticCopyMap<Color, FullPaletteValue>,
+    pub color_map: ColorMap<FullPaletteValue>,
 }
 
 fn make_variant<I: IntoColor<Lch>, O: FromColor<Lch>>(

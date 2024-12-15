@@ -2,14 +2,60 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 
-use linearize::StaticCopyMap;
 use palette::Srgba;
 use serde::{Deserialize, Serialize};
 
 use crate::{
     io::{ExportExt, LoadExt},
-    model::{Color, HexStr, Theme, BasePalette, FullPalette},
+    model::{ColorMap, HexStr, Theme, BasePalette, FullPalette, FULL_PALETTE_VARIANTS},
 };
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+struct BasePaletteExportable {
+    #[serde(rename = "$schema")]
+    pub schema: String,
+    pub dark: bool,
+
+    #[serde(flatten)]
+    pub color_map: ColorMap<HexStr>,
+}
+
+type HexColors = [HexStr; FULL_PALETTE_VARIANTS];
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+struct FullPaletteExportable {
+    #[serde(rename = "$schema")]
+    schema: String,
+    dark: bool,
+
+    #[serde(flatten)]
+    color_map: ColorMap<HexColors>,
+
+    // rename to 'fg' (historical reasons)
+    #[serde(rename = "fg")]
+    monochrome: HexColors,
+}
+
+impl From<BasePalette> for BasePaletteExportable {
+    fn from(v: BasePalette) -> Self {
+        Self {
+            schema: "https://raw.githubusercontent.com/ecto0310/vscode_theme_generator/refs/heads/main/schema/palette.json".to_string(),
+            dark: v.theme().dark(),
+            color_map: v.take().1.map_values(|v| HexStr(Srgba::from(v).into()))
+        }
+    }
+}
+
+impl From<FullPalette> for FullPaletteExportable {
+    fn from(v: FullPalette) -> Self {
+        Self {
+            schema: "https://raw.githubusercontent.com/ecto0310/vscode_theme_generator/refs/heads/main/schema/full_palette.json".to_string(),
+            dark: v.theme.dark(),
+            monochrome: v.monochrome.map(|c| HexStr(Srgba::from(c).into())),
+            color_map: v.color_map.map_values(|v| v.map(|v| HexStr(Srgba::from(v).into()))),
+        }
+    }
+}
 
 impl LoadExt for BasePalette {
     fn load(path: &Path) -> anyhow::Result<Self> {
@@ -38,50 +84,5 @@ impl ExportExt for FullPalette {
         let palette = serde_json::to_string(&palette)?;
         File::create(path)?.write_all(palette.as_bytes())?;
         Ok(())
-    }
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-struct BasePaletteExportable {
-    #[serde(rename = "$schema")]
-    pub schema: String,
-    pub dark: bool,
-
-    #[serde(flatten)]
-    pub color_map: StaticCopyMap<Color, HexStr>,
-}
-
-impl From<BasePalette> for BasePaletteExportable {
-    fn from(v: BasePalette) -> Self {
-        Self {
-            schema: "https://raw.githubusercontent.com/ecto0310/vscode_theme_generator/refs/heads/main/schema/palette.json".to_string(),
-            dark: v.theme().dark(),
-            color_map: v.take().1.map_values(|v| HexStr(Srgba::from(v).into()))
-        }
-    }
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize)]
-struct FullPaletteExportable {
-    #[serde(rename = "$schema")]
-    schema: String,
-    dark: bool,
-
-    #[serde(flatten)]
-    color_map: StaticCopyMap<Color, [HexStr; 5]>,
-
-    // rename to 'fg' (historical reasons)
-    #[serde(rename = "fg")]
-    monochrome: [HexStr; 5],
-}
-
-impl From<FullPalette> for FullPaletteExportable {
-    fn from(v: FullPalette) -> Self {
-        Self {
-            schema: "https://raw.githubusercontent.com/ecto0310/vscode_theme_generator/refs/heads/main/schema/full_palette.json".to_string(),
-            dark: v.theme.dark(),
-            monochrome: v.monochrome.map(|c| HexStr(Srgba::from(c).into())),
-            color_map: v.color_map.map_values(|v| v.map(|v| HexStr(Srgba::from(v).into()))),
-        }
     }
 }

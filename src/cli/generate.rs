@@ -6,7 +6,7 @@ use palette::Srgb;
 use crate::{
     cli::Cli,
     io::{ExportExt, Setting},
-    model::{BasePalette, Color, ColorMap, ColorMapExt, FullPalette, ThemeDetectionStrategy},
+    model::{BasePalette, Color, ColorMap, SrgbColorMapExt, FullPalette, ThemeDetectionStrategy},
     optimize::OptimizerExt,
     util::SrgbExt,
 };

@@ -1,7 +1,6 @@
 use std::{fs::File, io::Write, path::Path};
 
 use palette::Srgba;
-use linearize::StaticCopyMap;
 use serde::Serialize;
 
 pub mod editor_token_color_customizations;
@@ -22,9 +21,7 @@ pub struct Setting {
     editor_token_color_customizations: EditorTokenColorCustomizations,
 }
 
-type HexColor= [HexStr; FULL_PALETTE_VARIANTS];
-type ColorMap = StaticCopyMap<Color, HexColor>;
-
+type HexColors = [HexStr; FULL_PALETTE_VARIANTS];
 
 impl Setting {
     pub fn new(palette: &FullPalette, force_monochrome_ui_texts: bool) -> Self {

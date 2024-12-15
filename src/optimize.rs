@@ -1,11 +1,11 @@
 use std::time::{self, Duration};
 
 use itertools::Itertools;
-use palette::{FromColor, IntoColor, Lch};
+use palette::{FromColor, IntoColor, Lch, Srgb};
 use rand::seq::SliceRandom;
 
 use crate::{
-    model::{BasePalette, Color, ColorMap, ColorMapExt},
+    model::{BasePalette, Color, ColorMap, SrgbColorMapExt},
     util::SrgbExt,
 };
 
@@ -28,7 +28,7 @@ trait OptimizerColorMapExt {
     fn calc_score(&self) -> f32;
 }
 
-impl OptimizerColorMapExt for ColorMap {
+impl OptimizerColorMapExt for ColorMap<Srgb> {
     fn calc_score(&self) -> f32 {
         // TODO: これが期待通りに動いているか確認する
         let base_score: f32 = enum_iterator::all::<Color>()
@@ -66,14 +66,15 @@ impl OptimizerColorMapExt for ColorMap {
     }
 }
 
+// TODO: ScoredValue<T> にして追いやるべきかも
 #[derive(Debug, Clone)]
 struct ScoredColorMap {
-    color_map: ColorMap,
+    color_map: ColorMap<Srgb>,
     score: f32,
 }
 
 impl ScoredColorMap {
-    fn from(color_map: ColorMap) -> Self {
+    fn from(color_map: ColorMap<Srgb>) -> Self {
         Self {
             score: color_map.calc_score(),
             color_map,
@@ -84,17 +85,17 @@ impl ScoredColorMap {
         self.score
     }
 
-    fn take(self) -> ColorMap {
+    fn take(self) -> ColorMap<Srgb> {
         self.color_map
     }
 }
 
 pub fn optimize_color_map<R: rand::Rng>(
-    color_map: &ColorMap,
+    color_map: &ColorMap<Srgb>,
     candidates: &[Color],
     time_limit_ms: u64,
     rng: &mut R,
-) -> ColorMap {
+) -> ColorMap<Srgb> {
     // if candidates is empty, do nothing
     if candidates.is_empty() {
         return color_map.clone();

@@ -7,13 +7,13 @@ mod color;
 pub use color::Color;
 
 mod colormap;
-pub use colormap::{ColorMap, ColorMapExt};
+pub use colormap::{ColorMap, SrgbColorMapExt};
 
 mod base_palette;
 pub use base_palette::BasePalette;
 
 mod full_palette;
-pub use full_palette::{FullPalette, FullPaletteValue, VARIANTS as FULL_PALETTE_VARIANTS};
+pub use full_palette::{FullPalette, VARIANTS as FULL_PALETTE_VARIANTS};
 
 use clap::ValueEnum;
 

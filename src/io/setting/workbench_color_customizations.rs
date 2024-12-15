@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::{
-    model::{Color, HexStr},
+    model::{Color, HexStr, ColorMap},
     util::ReplaceAlphaExt,
 };
 
@@ -358,7 +358,7 @@ pub(super) struct WorkbenchColorCustomizations {
 }
 
 impl WorkbenchColorCustomizations {
-    pub(super) fn new(color_map: &super::ColorMap, ui_gray: super::HexColor) -> Self {
+    pub(super) fn new(color_map: &ColorMap<super::HexColors>, ui_gray: super::HexColors) -> Self {
         Self {
             focus_border: color_map[Color::Blue][2],
             foreground: ui_gray[3],

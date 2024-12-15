@@ -1,4 +1,3 @@
-
 use linearize::{StaticCopyMap, static_copy_map};
 use palette::{Srgb, Lch, FromColor};
 
@@ -7,9 +6,9 @@ use crate::{
     model::Color,
 };
 
-pub type ColorMap = StaticCopyMap<Color, Srgb>;
+pub type ColorMap<T> = StaticCopyMap<Color, T>;
 
-pub trait ColorMapExt {
+pub trait SrgbColorMapExt {
     fn random_generate_by_color<R: rand::Rng, CGray: Into<Srgb> + Copy, CBg: Into<Srgb> + Copy>(
         bg_color: CBg,
         cgray_color: CGray,
@@ -20,7 +19,7 @@ pub trait ColorMapExt {
     fn fg_color_avg_luminouse_chroma(&self) -> (f32, f32);
 }
 
-impl ColorMapExt for ColorMap {
+impl SrgbColorMapExt for ColorMap<Srgb> {
     fn random_generate_by_color<R: rand::Rng, CGray: Into<Srgb> + Copy, CBg: Into<Srgb> + Copy>(
         bg: CBg,
         gray: CGray,
@@ -55,5 +54,3 @@ impl ColorMapExt for ColorMap {
             .fold((0.0, 0.0), |(l_acc, c_acc), (l, c)| (l_acc + l, c_acc + c))
     }
 }
-
-

@@ -4,7 +4,7 @@ use clap::Args;
 
 use crate::{
     io::{ExportExt, LoadExt, Setting},
-    model::{BasePalette, Color, ColorMapExt, FullPalette},
+    model::{BasePalette, Color, SrgbColorMapExt, FullPalette},
     optimize::OptimizerExt,
     util::SrgbExt,
     Cli,
