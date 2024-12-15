@@ -26,7 +26,6 @@ impl OptimizerExt for BasePalette {
 
 impl Scoreable for ColorMap<Srgb> {
     fn calc_score(&self) -> f32 {
-        // TODO: これが期待通りに動いているか確認する
         let base_score: f32 = enum_iterator::all::<Color>()
             .tuple_combinations()
             .map(|(a, b)| {
@@ -70,7 +69,7 @@ pub fn optimize_color_map<R: rand::Rng>(
 ) -> ColorMap<Srgb> {
     // if candidates is empty, do nothing
     if candidates.is_empty() {
-        return color_map.clone();
+        return *color_map;
     }
 
     let time_limit = Duration::from_millis(time_limit_ms);
@@ -81,7 +80,7 @@ pub fn optimize_color_map<R: rand::Rng>(
 
     let mut count = 0;
 
-    let color_map = ScoredValue::new(color_map.clone());
+    let color_map = ScoredValue::new(*color_map);
     let mut best = color_map.clone();
     let mut cursor = color_map.clone();
 
