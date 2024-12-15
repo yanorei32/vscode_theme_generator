@@ -462,6 +462,7 @@ dependencies = [
  "enum-iterator",
  "itertools",
  "linearize",
+ "num-traits",
  "palette",
  "rand",
  "serde",

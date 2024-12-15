@@ -9,6 +9,7 @@ clap = { version = "4.5.20", features = ["derive"] }
 enum-iterator = "2.1.0"
 itertools = "0.13.0"
 linearize = { version = "0.1.1", features = ["serde-1", "derive"] }
+num-traits = "0.2.19"
 palette = "0.7.6"
 rand = "0.8.5"
 serde = { version = "1.0.210", features = ["derive"] }

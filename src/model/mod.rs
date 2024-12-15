@@ -18,6 +18,9 @@ pub use full_palette::{FullPalette, VARIANTS as FULL_PALETTE_VARIANTS};
 mod scored_value;
 pub use scored_value::{Scoreable, ScoredValue};
 
+mod linear;
+pub use linear::Linear;
+
 use clap::ValueEnum;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]

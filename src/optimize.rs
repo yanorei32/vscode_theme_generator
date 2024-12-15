@@ -5,7 +5,7 @@ use palette::{FromColor, IntoColor, Lch, Srgb};
 use rand::seq::SliceRandom;
 
 use crate::{
-    model::{Color, ColorMap, SrgbColorMapExt, Scoreable, ScoredValue},
+    model::{Color, ColorMap, Linear, Scoreable, ScoredValue, SrgbColorMapExt},
     util::SrgbExt,
 };
 
@@ -13,7 +13,6 @@ pub trait OptimizerExt {
     fn optimize<R: rand::Rng>(self, targets: &[Color], rng: &mut R) -> Self;
 }
 
-// TODO: BasePaletteに依存しない操作
 impl OptimizerExt for ColorMap<Srgb> {
     fn optimize<R: rand::Rng>(self, targets: &[Color], rng: &mut R) -> Self {
         optimize_color_map(&self, targets, 100, rng)
@@ -69,9 +68,7 @@ pub fn optimize_color_map<R: rand::Rng>(
     }
 
     let time_limit = Duration::from_millis(time_limit_ms);
-    let start_temp = 15000.0f32;
-    let end_temp = 0.0;
-
+    let temp = Linear::new(15000.0f32, 0.0);
     let start = time::Instant::now();
 
     let mut count = 0;
@@ -81,24 +78,21 @@ pub fn optimize_color_map<R: rand::Rng>(
     let mut cursor = color_map.clone();
 
     while start.elapsed() < time_limit {
-        let next = random_edit_one_color_of(&cursor, candidates, rng);
+        count += 1;
 
-        let temp = start_temp
-            + (end_temp - start_temp)
-                * (start.elapsed().as_micros() as f32 / time_limit.as_micros() as f32);
+        let next = random_edit_one_color_of(&cursor, candidates, rng);
+        let progress = start.elapsed().as_micros() as f32 / time_limit.as_micros() as f32;
 
         let diff = next.score() - cursor.score();
-        let r: f32 = rng.gen();
+        let rand: f32 = rng.gen();
 
-        if r < (diff / temp).exp() || cursor.score() < next.score() {
+        if rand < (diff / temp.v(progress)).exp() || cursor.score() < next.score() {
             cursor = next;
         }
 
         if best.score() < cursor.score() {
             best = cursor.clone();
         }
-
-        count += 1;
     }
 
     println!("loop count: {}, score: {}", count, best.score());
