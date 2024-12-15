@@ -35,16 +35,15 @@ impl Cli {
 
         let base = Srgb::from(args.rgb);
 
-        let (theme, bg, gray) = base.theme_color_for(args.color_theme);
+        let (theme, bg, reference) = base.theme_color_for(args.color_theme);
 
         // Don't optimize non-colored colors by default, likes Color::Gray
         let pre_optimizing_targets: Vec<_> = Color::colorized_iter().collect();
 
-        let color_map = ColorMap::random_generate_by_color(bg, gray, &mut rng)
+        let color_map = ColorMap::random_generate_by_color(bg, reference, &mut rng)
             .optimize(&pre_optimizing_targets, &mut rng);
 
         let palette = BasePalette::new(theme, color_map);
-
         let full_palette = FullPalette::from(&palette);
         let setting = Setting::new(&full_palette, args.no_saturation_ui);
 

@@ -1,17 +1,14 @@
-use linearize::{StaticCopyMap, static_copy_map};
-use palette::{Srgb, Lch, FromColor};
+use linearize::{static_copy_map, StaticCopyMap};
+use palette::{FromColor, Lch, Srgb};
 
-use crate::{
-    util::SrgbExt,
-    model::Color,
-};
+use crate::{model::Color, util::SrgbExt};
 
 pub type ColorMap<T> = StaticCopyMap<Color, T>;
 
 pub trait SrgbColorMapExt {
-    fn random_generate_by_color<R: rand::Rng, CGray: Into<Srgb> + Copy, CBg: Into<Srgb> + Copy>(
-        bg_color: CBg,
-        cgray_color: CGray,
+    fn random_generate_by_color<R: rand::Rng, CRef: Into<Srgb> + Copy, CBg: Into<Srgb> + Copy>(
+        bg: CBg,
+        reference: CRef,
         rng: &mut R,
     ) -> Self;
 
@@ -20,18 +17,18 @@ pub trait SrgbColorMapExt {
 }
 
 impl SrgbColorMapExt for ColorMap<Srgb> {
-    fn random_generate_by_color<R: rand::Rng, CGray: Into<Srgb> + Copy, CBg: Into<Srgb> + Copy>(
+    fn random_generate_by_color<R: rand::Rng, CRef: Into<Srgb> + Copy, CBg: Into<Srgb> + Copy>(
         bg: CBg,
-        gray: CGray,
+        reference: CRef,
         rng: &mut R,
     ) -> Self {
-        let gray = gray.into();
+        let reference = reference.into();
         let bg = bg.into();
 
         static_copy_map! {
             Color::Bg => bg,
-            Color::Gray => gray,
-            _ => gray.new_by_random_hue(rng),
+            Color::Gray => reference,
+            _ => reference.new_by_random_hue(rng),
         }
     }
 

@@ -29,7 +29,7 @@ impl SrgbExt for Srgb {
         let darken = Srgb::from_color(Lch::new(10.0, 10.0, self_lch.hue));
         let whiten = Srgb::from_color(Lch::new(95.0, 5.0, self_lch.hue));
 
-        let (theme, bg, gray, is_default_theme) = if BLACK.compare(self) < 10.5 {
+        let (theme, bg, reference, is_default_theme) = if BLACK.compare(self) < 10.5 {
             match strategy {
                 S::Auto | S::Dark => (T::Dark, *self, mid, false),
                 S::Light => (T::Light, whiten, mid, false),
@@ -53,7 +53,7 @@ impl SrgbExt for Srgb {
         };
 
         println!("select {theme} (default: {is_default_theme}) theme");
-        (theme, bg, gray)
+        (theme, bg, reference)
     }
 }
 
