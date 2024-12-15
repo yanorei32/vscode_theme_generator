@@ -40,7 +40,7 @@ impl From<&BasePalette> for BasePaletteExportable {
     fn from(v: &BasePalette) -> Self {
         Self {
             schema: "https://raw.githubusercontent.com/ecto0310/vscode_theme_generator/refs/heads/main/schema/palette.json".to_string(),
-            dark: v.theme().dark(),
+            dark: v.theme().is_dark(),
             color_map: v.color_map().map_values(|v| HexStr(Srgba::from(v).into()))
         }
     }
@@ -50,7 +50,7 @@ impl From<&FullPalette> for FullPaletteExportable {
     fn from(v: &FullPalette) -> Self {
         Self {
             schema: "https://raw.githubusercontent.com/ecto0310/vscode_theme_generator/refs/heads/main/schema/full_palette.json".to_string(),
-            dark: v.theme().dark(),
+            dark: v.theme().is_dark(),
             monochrome: v.monochrome().map(|c| HexStr(Srgba::from(c).into())),
             color_map: v.color_map().map_values(|v| v.map(|v| HexStr(Srgba::from(v).into()))),
         }
@@ -62,7 +62,7 @@ impl LoadExt for BasePalette {
         let palette = std::fs::read_to_string(path)?;
         let palette: BasePaletteExportable = serde_json::from_str(&palette)?;
 
-        let theme = Theme::from_dark(palette.dark);
+        let theme = Theme::from_is_dark(palette.dark);
         let color_map = palette.color_map.map_values(|v| v.0.color.into());
 
         Ok(Self::new(theme, color_map))

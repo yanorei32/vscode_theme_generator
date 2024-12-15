@@ -43,11 +43,11 @@ pub enum Theme {
 }
 
 impl Theme {
-    pub fn dark(&self) -> bool {
+    pub fn is_dark(&self) -> bool {
         *self == Self::Dark
     }
 
-    pub fn from_dark(b: bool) -> Self {
+    pub fn from_is_dark(b: bool) -> Self {
         match b {
             true => Self::Dark,
             false => Self::Light,

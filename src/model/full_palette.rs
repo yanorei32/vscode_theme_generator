@@ -46,7 +46,7 @@ fn make_variant<I: IntoColor<Lch>, O: FromColor<Lch>>(
         lch.l - width,
     ];
 
-    if theme.dark() {
+    if theme.is_dark() {
         variants.reverse();
     }
 
