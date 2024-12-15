@@ -12,11 +12,12 @@ use crate::{
 };
 
 #[derive(Debug, Clone, Args)]
-
 pub struct GenerateArgs {
     pub rgb: Srgb<u8>,
+
     #[arg(short, long)]
     pub no_saturation_fg: bool,
+
     #[arg(short, long, default_value = "auto")]
     pub color_theme: ThemeDetectionPolicy,
 }

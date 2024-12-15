@@ -9,13 +9,13 @@ use crate::{
 
 #[derive(Debug, Clone)]
 pub struct FullPalette {
-    pub actual_mode: Theme,
+    pub theme: Theme,
 
     pub fg: [Srgb; 5],
     pub color_map: StaticMap<Color, [Srgb; 5]>,
 }
 
-fn make_variant(rgb: Srgb, mode: Theme, double_width: bool) -> [Srgb; 5] {
+fn make_variant(rgb: Srgb, theme: Theme, double_width: bool) -> [Srgb; 5] {
     let lch = Lch::from_color(rgb);
     let width_cut = if double_width { 1.0 } else { 2.0 };
     let width = lch.l.min(100.0 - lch.l) / width_cut;
@@ -28,7 +28,7 @@ fn make_variant(rgb: Srgb, mode: Theme, double_width: bool) -> [Srgb; 5] {
         lch.l - width,
     ];
 
-    if mode.dark() {
+    if theme.dark() {
         ls.reverse();
     }
 
@@ -41,7 +41,7 @@ impl From<BasePalette> for FullPalette {
         let fg = Srgb::from_color(Lch::new(color_map.fg_color_avg_luminouse_chroma().0, 0.0, 0.0));
 
         Self {
-            actual_mode,
+            theme: actual_mode,
             fg: make_variant(fg, actual_mode, true),
             color_map: color_map.map(|k, c| make_variant(c, actual_mode, k == Color::Bg)),
         }

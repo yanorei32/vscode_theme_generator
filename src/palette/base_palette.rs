@@ -9,13 +9,13 @@ use crate::{
 
 #[derive(Debug, Clone)]
 pub struct BasePalette {
-    actual_mode: Theme,
+    theme: Theme,
     color_map: ColorMap,
 }
 
 impl BasePalette {
     pub fn new(base_rgb: &Srgb, policy: &ThemeDetectionPolicy, rng: &mut ThreadRng) -> Self {
-        let (actual_mode, bg, fg) = base_rgb.theme_color_for(policy);
+        let (theme, bg, fg) = base_rgb.theme_color_for(policy);
 
         // TODO: これで動いてるか確認する
         let color_map = static_map! {
@@ -24,19 +24,19 @@ impl BasePalette {
             _ => fg.new_by_random_hue(rng),
         };
 
-        Self::from_parts(actual_mode, color_map)
+        Self::from_parts(theme, color_map)
     }
 
-    pub fn from_parts(actual_mode: Theme, color_map: ColorMap) -> Self {
+    pub fn from_parts(theme: Theme, color_map: ColorMap) -> Self {
         Self {
-            actual_mode,
+            theme,
             color_map,
         }
     }
 
     pub fn renew_colors(&self, renew_targets: &[Color], rng: &mut ThreadRng) -> Self {
         let base = self.color_map.base_color();
-        let (actual_mode, bg, _) = base.theme_color_for(&ThemeDetectionPolicy::Auto);
+        let (theme, bg, _) = base.theme_color_for(&ThemeDetectionPolicy::Auto);
 
         let mut color_map = self.color_map.clone();
 
@@ -48,14 +48,14 @@ impl BasePalette {
             }
         }
 
-        Self::from_parts(actual_mode, color_map)
+        Self::from_parts(theme, color_map)
     }
 
-    pub fn dark(&self) -> bool {
-        self.actual_mode == Theme::Dark
+    pub fn theme(&self) -> Theme {
+        self.theme
     }
 
     pub fn take(self) -> (Theme, ColorMap) {
-        (self.actual_mode, self.color_map)
+        (self.theme, self.color_map)
     }
 }

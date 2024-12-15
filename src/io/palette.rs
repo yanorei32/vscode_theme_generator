@@ -17,12 +17,7 @@ impl LoadExt for BasePalette {
         let palette = std::fs::read_to_string(path)?;
         let palette: BasePaletteExportable = serde_json::from_str(&palette)?;
 
-        let actual_mode = if palette.dark {
-            Theme::Dark
-        } else {
-            Theme::Light
-        };
-
+        let actual_mode = Theme::from_dark(palette.dark);
         let color_map = palette.color_map.map_values(|v| v.0.color.into());
 
         Ok(Self::from_parts(actual_mode, color_map))
@@ -61,7 +56,7 @@ impl From<BasePalette> for BasePaletteExportable {
     fn from(v: BasePalette) -> Self {
         Self {
             schema: "https://raw.githubusercontent.com/ecto0310/vscode_theme_generator/refs/heads/main/schema/palette.json".to_string(),
-            dark: v.dark(),
+            dark: v.theme().dark(),
             color_map: v.take().1.map_values(|v| HexStr(Srgba::from(v).into()))
         }
     }
@@ -83,7 +78,7 @@ impl From<FullPalette> for FullPaletteExportable {
     fn from(v: FullPalette) -> Self {
         Self {
             schema: "https://raw.githubusercontent.com/ecto0310/vscode_theme_generator/refs/heads/main/schema/full_palette.json".to_string(),
-            dark: v.actual_mode == Theme::Dark,
+            dark: v.theme.dark(),
             fg: v.fg.iter().map(|c| HexStr(Srgba::from(*c).into())).collect(),
             color_map: v.color_map.map_values(|v| v.iter().map(|v| HexStr(Srgba::from(*v).into())).collect()),
         }

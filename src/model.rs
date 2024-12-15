@@ -29,6 +29,13 @@ impl Theme {
     pub fn dark(&self) -> bool {
         *self == Self::Dark
     }
+
+    pub fn from_dark(b: bool) -> Self {
+        match b {
+            true => Self::Dark,
+            false => Self::Light,
+        }
+    }
 }
 
 impl Display for Theme {

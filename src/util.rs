@@ -34,7 +34,7 @@ impl SrgbExt for Srgb {
         let darken = Srgb::from_color(Lch::new(10.0, 10.0, self_lch.hue));
         let whiten = Srgb::from_color(Lch::new(95.0, 5.0, self_lch.hue));
 
-        let (actual_mode, bg, fg, is_default_theme) = if BLACK.compare(self) < 10.5 {
+        let (theme, bg, fg, is_default_theme) = if BLACK.compare(self) < 10.5 {
             match theme_detection_policy {
                 TD::Auto | TD::Dark => (T::Dark, *self, mid, false),
                 TD::Light => (T::Light, whiten, mid, false),
@@ -45,31 +45,20 @@ impl SrgbExt for Srgb {
                 TD::Auto | TD::Light => (T::Light, *self, mid, false),
             }
         } else {
-            let actual_mode = match theme_detection_policy {
+            let theme = match theme_detection_policy {
                 TD::Auto if 42.0 < darken.compare(self) => T::Dark,
                 TD::Auto | TD::Light => T::Light,
                 TD::Dark => T::Dark,
             };
 
-            match actual_mode {
-                T::Dark => (actual_mode, darken, *self, true),
-                T::Light => (actual_mode, whiten, *self, true),
+            match theme {
+                T::Dark => (theme, darken, *self, true),
+                T::Light => (theme, whiten, *self, true),
             }
         };
 
-        println!("select {actual_mode} (default: {is_default_theme}) theme");
-        (actual_mode, bg, fg)
-    }
-}
-
-pub trait ReplaceAlphaExt {
-    fn alpha(&self, alpha: f32) -> Self;
-}
-
-impl ReplaceAlphaExt for HexStr {
-    fn alpha(&self, alpha: f32) -> Self {
-        let alpha = (u8::MAX as f32 * alpha) as u8;
-        HexStr(self.0.color.with_alpha(alpha))
+        println!("select {theme} (default: {is_default_theme}) theme");
+        (theme, bg, fg)
     }
 }
 
@@ -92,10 +81,20 @@ impl ColorMapExt for ColorMap {
             .count() as f32;
 
         self.iter()
-            .filter(|(k, _)| !k.is_bg_color())
-            .fold((0.0, 0.0), |(l, chroma), (_, value)| {
-                let lch = Lch::from_color(*value);
-                (l + lch.l / n, chroma + lch.chroma / n)
-            })
+            .filter_map(|(k, v)| (!k.is_bg_color()).then_some(v))
+            .map(|c| Lch::from_color(*c))
+            .map(|c| (c.l / n, c.chroma / n))
+            .fold((0.0, 0.0), |(l_acc, c_acc), (l, c)| (l_acc + l, c_acc + c))
+    }
+}
+
+pub trait ReplaceAlphaExt {
+    fn alpha(&self, alpha: f32) -> Self;
+}
+
+impl ReplaceAlphaExt for HexStr {
+    fn alpha(&self, alpha: f32) -> Self {
+        let alpha = (u8::MAX as f32 * alpha) as u8;
+        HexStr(self.0.color.with_alpha(alpha))
     }
 }

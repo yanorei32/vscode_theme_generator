@@ -1,7 +1,7 @@
-use std::path::Path;
-
 mod palette;
 mod setting;
+
+use std::path::Path;
 
 pub use setting::Setting;
 
