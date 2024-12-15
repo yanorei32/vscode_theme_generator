@@ -32,7 +32,7 @@ fn make_variant<I: IntoColor<Lch>, O: FromColor<Lch>>(
     i: I,
     theme: Theme,
     double_width: bool,
-) -> [O; 5] {
+) -> [O; VARIANTS] {
     let lch: Lch = i.into_color();
 
     let width_cut = if double_width { 1.0 } else { 2.0 };
