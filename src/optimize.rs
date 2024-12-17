@@ -1,12 +1,12 @@
 use std::time::{self, Duration};
 
 use itertools::Itertools;
-use strum::VariantArray;
 use palette::{FromColor, IntoColor, Lch, Srgb};
 use rand::seq::SliceRandom;
+use strum::VariantArray;
 
 use crate::{
-    model::{Scoreable, Color, ColorMap, Linear, ScoredValue, SrgbColorMapExt},
+    model::{Color, ColorMap, Linear, Scoreable, ScoredValue, SrgbColorMapExt},
     util::SrgbExt,
 };
 

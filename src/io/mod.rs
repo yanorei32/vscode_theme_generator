@@ -10,5 +10,7 @@ pub trait ExportExt {
 }
 
 pub trait LoadExt {
-    fn load(path: &Path) -> anyhow::Result<Self> where Self: Sized;
+    fn load(path: &Path) -> anyhow::Result<Self>
+    where
+        Self: Sized;
 }

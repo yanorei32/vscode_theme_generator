@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     io::{ExportExt, LoadExt},
-    model::{ColorMap, HexStr, Theme, BasePalette, FullPalette, FULL_PALETTE_VARIANTS},
+    model::{BasePalette, ColorMap, FullPalette, HexStr, Theme, FULL_PALETTE_VARIANTS},
 };
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

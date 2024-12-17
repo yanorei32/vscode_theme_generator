@@ -1,5 +1,5 @@
-use std::fmt::{Display, Error as FmtError, Formatter};
 use clap::ValueEnum;
+use std::fmt::{Display, Error as FmtError, Formatter};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Theme {

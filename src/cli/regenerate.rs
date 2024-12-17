@@ -4,9 +4,8 @@ use clap::Args;
 
 use crate::{
     io::{ExportExt, LoadExt, Setting},
-    model::{BasePalette, Color, SrgbColorMapExt, FullPalette},
+    model::{BasePalette, Color, FullPalette},
     optimize::OptimizerExt,
-    util::SrgbExt,
     Cli,
 };
 
@@ -28,24 +27,9 @@ impl Cli {
 
         let palette_path = path_prefix.join("palette.json");
 
-        let (theme, mut color_map) = BasePalette::load(&palette_path)?.take();
-
-        //  TODO: 余計なColorMapに対する知識 BEGIN
-        let base = color_map.base_color();
-
-        for &target in &args.fixs {
-            if target.is_bg_color() {
-                let (_, bg, _) = base.theme_color_for(theme.into());
-                color_map[target] = bg;
-            } else {
-                color_map[target] = base.new_by_random_hue(&mut rng);
-            }
-        }
-        //  TODO: 余計なColorMapに対する知識 END
-
-        let color_map = color_map.optimize(&args.fixs, &mut rng);
-
-        let palette = BasePalette::new(theme, color_map);
+        let palette = BasePalette::load(&palette_path)?
+            .regenerate_colors(&args.fixs, &mut rng)
+            .optimize(&args.fixs, &mut rng);
 
         let full_palette = FullPalette::from(&palette);
 

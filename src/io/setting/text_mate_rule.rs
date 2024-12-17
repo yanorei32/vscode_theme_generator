@@ -19,7 +19,11 @@ pub(super) struct TextMateRuleSettings {
 }
 
 impl TextMateRule {
-    pub(super) fn new(scope: &[&str], font_style: Option<&str>, foreground: Option<HexStr>) -> Self {
+    pub(super) fn new(
+        scope: &[&str],
+        font_style: Option<&str>,
+        foreground: Option<HexStr>,
+    ) -> Self {
         let font_style = font_style.map(|font_style| font_style.to_string());
         Self {
             scope: scope.iter().map(|v| v.to_string()).collect(),

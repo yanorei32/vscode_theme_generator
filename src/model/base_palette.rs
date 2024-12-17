@@ -1,5 +1,11 @@
+use crate::{
+    determinator,
+    model::{Color, ColorMap, SrgbColorMapExt, Theme},
+    util::SrgbExt,
+    optimize::OptimizerExt,
+};
+
 use palette::Srgb;
-use crate::model::{ColorMap, Theme};
 
 #[derive(Debug, Clone)]
 pub struct BasePalette {
@@ -16,11 +22,33 @@ impl BasePalette {
         self.theme
     }
 
+    pub fn regenerate_colors<R: rand::Rng>(&self, targets: &[Color], rng: &mut R) -> Self {
+        let mut color_map = self.color_map;
+        let base = self.color_map.base_color();
+
+        for &target in targets {
+            if target.is_bg_color() {
+                let d = determinator::determinate(base, self.theme.into());
+                color_map[target] = d.colors.bg;
+            } else {
+                color_map[target] = base.new_by_random_hue(rng);
+            }
+        }
+
+        Self::new(self.theme, color_map)
+    }
+
     pub fn color_map(&self) -> &ColorMap<Srgb> {
         &self.color_map
     }
+}
 
-    pub fn take(self) -> (Theme, ColorMap<Srgb>) {
-        (self.theme, self.color_map)
+impl OptimizerExt for BasePalette {
+    fn optimize<R: rand::Rng>(self, targets: &[Color], rng: &mut R) -> Self {
+        Self {
+            theme: self.theme,
+            color_map: self.color_map.optimize(targets, rng),
+        }
     }
 }
+

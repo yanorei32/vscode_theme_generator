@@ -25,7 +25,6 @@ impl FullPalette {
     pub fn monochrome(&self) -> &FullPaletteValue {
         &self.monochrome
     }
-
 }
 
 fn make_variant<I: IntoColor<Lch>, O: FromColor<Lch>>(

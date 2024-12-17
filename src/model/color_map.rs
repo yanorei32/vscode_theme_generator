@@ -1,34 +1,22 @@
 use linearize::{static_copy_map, StaticCopyMap};
 use palette::{FromColor, Lch, Srgb};
 
-use crate::{model::Color, util::SrgbExt};
+use crate::{determinator::DeterminatedColors, model::Color, util::SrgbExt};
 
 pub type ColorMap<T> = StaticCopyMap<Color, T>;
 
 pub trait SrgbColorMapExt {
-    fn random_generate_by_color<R: rand::Rng, CRef: Into<Srgb> + Copy, CBg: Into<Srgb> + Copy>(
-        bg: CBg,
-        reference: CRef,
-        rng: &mut R,
-    ) -> Self;
-
+    fn initialize_with<R: rand::Rng>(color: DeterminatedColors, rng: &mut R) -> Self;
     fn base_color(&self) -> Srgb;
     fn fg_color_avg_luminouse_chroma(&self) -> (f32, f32);
 }
 
 impl SrgbColorMapExt for ColorMap<Srgb> {
-    fn random_generate_by_color<R: rand::Rng, CRef: Into<Srgb> + Copy, CBg: Into<Srgb> + Copy>(
-        bg: CBg,
-        reference: CRef,
-        rng: &mut R,
-    ) -> Self {
-        let reference = reference.into();
-        let bg = bg.into();
-
+    fn initialize_with<R: rand::Rng>(color: DeterminatedColors, rng: &mut R) -> Self {
         static_copy_map! {
-            Color::Bg => bg,
-            Color::Gray => reference,
-            _ => reference.new_by_random_hue(rng),
+            Color::Bg => color.bg,
+            Color::Gray => color.reference,
+            _ => color.reference.new_by_random_hue(rng),
         }
     }
 

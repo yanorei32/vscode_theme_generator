@@ -10,8 +10,8 @@ mod workbench_color_customizations;
 use editor_token_color_customizations::EditorTokenColorCustomizations;
 use workbench_color_customizations::WorkbenchColorCustomizations;
 
-use crate::model::{Color, FullPalette, HexStr, FULL_PALETTE_VARIANTS};
 use super::ExportExt;
+use crate::model::{Color, FullPalette, HexStr, FULL_PALETTE_VARIANTS};
 
 #[derive(Serialize)]
 pub struct Setting {
