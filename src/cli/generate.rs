@@ -6,8 +6,8 @@ use crate::{
     determinator,
     io::{ExportExt, Setting},
     model::{BasePalette, Color, ColorMap, FullPalette, SrgbColorMapExt, ThemeDetectionStrategy},
-    paths::Paths,
     optimize::OptimizerExt,
+    paths::Paths,
 };
 
 #[derive(Debug, Clone, Args)]

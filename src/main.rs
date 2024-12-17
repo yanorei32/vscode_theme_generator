@@ -3,10 +3,10 @@ use cli::Cli;
 
 mod cli;
 mod determinator;
+mod foreign;
 mod io;
 mod model;
 mod optimize;
-mod foreign;
 mod paths;
 
 fn main() -> anyhow::Result<()> {

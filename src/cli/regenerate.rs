@@ -28,7 +28,7 @@ impl Cli {
         let full_palette = FullPalette::from(&palette);
 
         let setting = Setting::new(&full_palette, args.no_saturation_ui);
- 
+
         palette.export(&Paths::palette())?;
         full_palette.export(&Paths::full_palette())?;
         setting.export(&Paths::setting())?;

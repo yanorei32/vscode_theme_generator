@@ -6,8 +6,8 @@ use rand::seq::SliceRandom;
 use strum::VariantArray;
 
 use crate::{
-    model::{Color, ColorMap, Linear, Scoreable, ScoredValue, SrgbColorMapExt},
     foreign::SrgbExt,
+    model::{Color, ColorMap, Linear, Scoreable, ScoredValue, SrgbColorMapExt},
 };
 
 pub trait OptimizerExt {
