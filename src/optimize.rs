@@ -7,7 +7,7 @@ use strum::VariantArray;
 
 use crate::{
     model::{Color, ColorMap, Linear, Scoreable, ScoredValue, SrgbColorMapExt},
-    util::SrgbExt,
+    foreign::SrgbExt,
 };
 
 pub trait OptimizerExt {

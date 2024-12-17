@@ -6,7 +6,7 @@ mod determinator;
 mod io;
 mod model;
 mod optimize;
-mod util;
+mod foreign;
 mod paths;
 
 fn main() -> anyhow::Result<()> {

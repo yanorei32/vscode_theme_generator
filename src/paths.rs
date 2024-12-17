@@ -1,7 +1,5 @@
 use std::path::PathBuf;
 
-use crate::model::BasePalette;
-
 pub struct Paths;
 
 impl Paths {

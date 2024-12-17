@@ -1,7 +1,7 @@
 use linearize::{static_copy_map, StaticCopyMap};
 use palette::{FromColor, Lch, Srgb};
 
-use crate::{determinator::DeterminatedColors, model::Color, util::SrgbExt};
+use crate::{determinator::DeterminatedColors, model::Color, foreign::SrgbExt};
 
 pub type ColorMap<T> = StaticCopyMap<Color, T>;
 

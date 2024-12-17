@@ -1,8 +1,8 @@
 use palette::{FromColor, Lch, Srgb};
 
 use crate::{
+    foreign::SrgbExt,
     model::{Theme as T, ThemeDetectionStrategy as S},
-    util::SrgbExt,
 };
 
 const BLACK: Srgb = Srgb::new(0.0, 0.0, 0.0);

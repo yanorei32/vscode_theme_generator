@@ -1,7 +1,7 @@
 use crate::{
     determinator,
+    foreign::SrgbExt,
     model::{Color, ColorMap, SrgbColorMapExt, Theme},
-    util::SrgbExt,
     optimize::OptimizerExt,
 };
 
@@ -51,4 +51,3 @@ impl OptimizerExt for BasePalette {
         }
     }
 }
-
