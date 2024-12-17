@@ -53,7 +53,7 @@ impl Serialize for HexStr {
 
 struct HexStrVisitor;
 
-impl<'de> Visitor<'de> for HexStrVisitor {
+impl Visitor<'_> for HexStrVisitor {
     type Value = HexStr;
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
