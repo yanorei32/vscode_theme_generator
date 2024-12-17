@@ -1,11 +1,10 @@
-use std::{fs::create_dir_all, path::Path};
-
 use clap::Args;
 
 use crate::{
     io::{ExportExt, LoadExt, Setting},
     model::{BasePalette, Color, FullPalette},
     optimize::OptimizerExt,
+    paths::Paths,
     Cli,
 };
 
@@ -22,22 +21,17 @@ impl Cli {
     pub fn regenerate(args: &RegenerateArgs) -> anyhow::Result<()> {
         let mut rng = rand::thread_rng();
 
-        let path_prefix = Path::new(".vscode");
-        create_dir_all(path_prefix)?;
-
-        let palette_path = path_prefix.join("palette.json");
-
-        let palette = BasePalette::load(&palette_path)?
+        let palette = BasePalette::load(&Paths::palette())?
             .regenerate_colors(&args.fixs, &mut rng)
             .optimize(&args.fixs, &mut rng);
 
         let full_palette = FullPalette::from(&palette);
 
         let setting = Setting::new(&full_palette, args.no_saturation_ui);
-
-        palette.export(&palette_path)?;
-        full_palette.export(&path_prefix.join("full_palette.json"))?;
-        setting.export(&path_prefix.join("settings.json"))?;
+ 
+        palette.export(&Paths::palette())?;
+        full_palette.export(&Paths::full_palette())?;
+        setting.export(&Paths::setting())?;
 
         Ok(())
     }

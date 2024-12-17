@@ -7,6 +7,7 @@ mod io;
 mod model;
 mod optimize;
 mod util;
+mod paths;
 
 fn main() -> anyhow::Result<()> {
     Cli::parse().run()

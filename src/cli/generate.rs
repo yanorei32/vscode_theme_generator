@@ -1,5 +1,3 @@
-use std::{fs::create_dir_all, path::Path};
-
 use clap::Args;
 use palette::Srgb;
 
@@ -8,6 +6,7 @@ use crate::{
     determinator,
     io::{ExportExt, Setting},
     model::{BasePalette, Color, ColorMap, FullPalette, SrgbColorMapExt, ThemeDetectionStrategy},
+    paths::Paths,
     optimize::OptimizerExt,
 };
 
@@ -27,12 +26,6 @@ impl Cli {
     pub fn generate(args: &GenerateArgs) -> anyhow::Result<()> {
         let mut rng = rand::thread_rng();
 
-        let path_prefix = Path::new(".vscode");
-        create_dir_all(path_prefix)?;
-        let palette_path = path_prefix.join("palette.json");
-        let full_palette_path = path_prefix.join("full_palette.json");
-        let setting_path = path_prefix.join("settings.json");
-
         let determinated = determinator::determinate(args.rgb, args.color_theme);
 
         // Don't optimize non-colored colors by default, likes Color::Gray
@@ -45,9 +38,10 @@ impl Cli {
         let full_palette = FullPalette::from(&palette);
         let setting = Setting::new(&full_palette, args.no_saturation_ui);
 
-        palette.export(&palette_path)?;
-        full_palette.export(&full_palette_path)?;
-        setting.export(&setting_path)?;
+        std::fs::create_dir(Paths::vscode_dir())?;
+        palette.export(&Paths::palette())?;
+        full_palette.export(&Paths::full_palette())?;
+        setting.export(&Paths::setting())?;
 
         Ok(())
     }
